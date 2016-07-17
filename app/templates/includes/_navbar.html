@@ -1,0 +1,27 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="flase">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Francium</a>
+        </div>
+
+        <div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1" aria-expanded="false">
+            <ul class="nav navbar-nav navbar-right">
+                <li {% if title=='home' %}class="active"{% endif %}><a href="{{ url_for('main.home') }}"><i class="icon-home"></i> 主页<span class="sr-only">(current)</span></a></li>
+                <li {% if title=='role' %}class="active"{% endif %}><a href="{{ url_for('role.home') }}"><i class="icon-home"></i> 角色<span class="sr-only">(current)</span></a></li>
+                <li {% if title=='function' %}class="active"{% endif %}><a href="{{ url_for('function.home') }}"><i class="icon-home"></i> 功能<span class="sr-only">(current)</span></a></li>
+                {% if session.email %}
+                <li><a href="{{ url_for('auth.logout') }}">登出</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">登录</a></li>
+                <li><a href="{{ url_for('auth.register') }}">注册</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
