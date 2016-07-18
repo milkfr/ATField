@@ -17,13 +17,13 @@
         {% endfor %}
         <td>
             <div class="btn-group">
-                <a class="btn btn-danger btn-xs" href="{{ url_for('role.edit', id=content['id']) }}" target="_blank">修改</a>
-                <!--<a class="btn btn-danger btn-xs" href="{{ url_for('role.delete', id=content['id']) }}">删除</a>-->
-                <a class="btn btn-danger btn-xs" href="{{ url_for('role.function', id=content['id']) }}">查看功能</a>
+                <a class="btn btn-danger btn-xs" href="{{ url_for('role.function_delete', id=role_id, role_function_id=content['role_function_id']) }}">删除</a>
         </div>
         </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+{% include 'includes/_flash.html' %}
+{% include 'includes/_form.html' %}
 {% endblock center %}

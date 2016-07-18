@@ -29,6 +29,6 @@ class UserModelTestCase(ModelBasicsTestCase):
         User.add_new_user(email="cat", password="cat")
         u = User.get_user_by_email("cat")
         self.assertFalse(u is None)
-        self.assertTrue(User.get_user_from_email("dog") is None)
+        self.assertTrue(User.get_user_by_email("dog") is None)
 
 

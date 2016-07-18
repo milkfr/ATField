@@ -31,4 +31,7 @@ def create_app(config_name):
     from app.function import function as function_blueprint
     app.register_blueprint(function_blueprint, url_prefix="/function")
 
+    from app.document import document as document_blueprint
+    app.register_blueprint(document_blueprint, url_prefix="/document")
+
     return app

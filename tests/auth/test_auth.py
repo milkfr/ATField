@@ -18,7 +18,7 @@ class AuthTestCase(BasicsTestCase):
                 "password2": "cat",
             })
             self.assertEqual(response.location[-6:], url_for("auth.login"))
-            self.assertTrue(User.get_user_from_email("example@example.com") is not None)
+            self.assertTrue(User.get_user_by_email("example@example.com") is not None)
             client.post(url_for("auth.login"), data={
                 "email": "example@example.com",
                 "password": "cat"
@@ -29,8 +29,3 @@ class AuthTestCase(BasicsTestCase):
             client.get(url_for("auth.logout"))
             response = client.get(url_for("main.admin"))
             self.assertEqual(response.location[-6:], url_for("auth.login"))
-
-
-
-
-

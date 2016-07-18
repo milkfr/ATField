@@ -12,26 +12,27 @@ from app.models.functions import Function
 @function.route("/")
 @login_required
 def home():
-    headings = ["part", "name", "permission"]
-    contents = Function.query.order_by(Function.part).all()
+    headings = ["part", "name", "permission", "publish"]
+    contents = Function.get_all_function()
     return render_template("function/home.html", headings=headings, contents=contents)
 
 
 @function.route("/new", methods=["GET", "POST"])
 @login_required
 def new():
-   form = FunctionForm()
-   if form.validate_on_submit():
-       part = form.part.data
-       name= form.part.data
-       permission = form.permission.data
-       if Function.test_exist_function(part=part, name=name, permission=permission):
-           Function.add_function_type(part=part, name=name, permission=permission)
-           return redirect(url_for("function.home"))
-   return render_template("function/edit.html", form=form)
+    form = FunctionForm()
+    if form.validate_on_submit():
+        part = form.part.data
+        name = form.name.data
+        permission = form.permission.data
+        if Function.test_exist_function(part=part, name=name, permission=permission):
+            Function.add_function_type(part=part, name=name, permission=permission)
+            return redirect(url_for("function.home"))
+    return render_template("function/edit.html", form=form)
 
 
 @function.route("/edit/<permission>", methods=["GET", "POST"])
+@login_required
 def edit(permission):
     form = FunctionForm()
     if form.validate_on_submit():
@@ -51,6 +52,14 @@ def edit(permission):
 def delete(permission):
     Function.delete_function_by_permission(permission)
     return redirect(url_for("function.home"))
+
+
+@function.route("/publish/<permission>")
+def publish(permission):
+    Function.xor_function(permission)
+    return redirect(url_for("function.home"))
+
+
 
 
 

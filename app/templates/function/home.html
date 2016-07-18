@@ -18,8 +18,9 @@
         <td>
             <div class="btn-group">
                 <a class="btn btn-danger btn-xs" href="{{ url_for('function.edit', permission=content['permission']) }}" target="_blank">修改</a>
-                <a class="btn btn-danger btn-xs" href="{{ url_for('function.delete', permission=content['permission']) }}">删除</a>
-                <a class="btn btn-danger btn-xs" href="">查看功能</a>
+                <a class="btn btn-danger btn-xs" href="{{ url_for('function.publish', permission=content['permission']) }}">发布</a>
+                <!--<a class="btn btn-danger btn-xs" href="{{ url_for('function.delete', permission=content['permission']) }}">删除</a>-->
+                <!--<a class="btn btn-danger btn-xs" href="">查看功能</a>-->
         </div>
         </td>
     </tr>

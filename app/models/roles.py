@@ -34,8 +34,9 @@ class Role(db.Model):
 
     @staticmethod
     def init_role_types():
-        Role.add_role_type(department="user", name="default")
-        Role.add_role_type(department="admin", name="root")
+        Role.add_role_type(department="user", name="base")
+        Role.add_role_type(department="admin", name="base")
+        Role.add_role_type(department="document", name="base")
 
     @staticmethod
     def get_role_departments():
@@ -60,7 +61,7 @@ class Role(db.Model):
 
     @staticmethod
     def get_all_roles():
-        return [(roles.department, roles.name) for roles in Role.query.order_by(Role.department).all()]
+        return Role.query.all()
 
     @staticmethod
     def delete_role_by_id(id):

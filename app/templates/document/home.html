@@ -1,0 +1,36 @@
+{% extends 'document/base.html' %}
+{% block center %}
+<table class="table table-striped table-hover ">
+  <thead>
+    <tr>
+      {% for heading in headings %}
+      <th>{{ heading }}</th>
+      {% endfor %}
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for content in contents %}
+    <tr>
+        {% for heading in headings %}
+        <td>{{ content[heading] }}</td>
+        {% endfor %}
+        <td>
+            <div class="btn-group">
+                {% if "DOCUMENT_EDIT" in session.permission %}
+                <a class="btn btn-danger btn-xs" href="{{ url_for('document.edit', id=content['id']) }}" target="_blank">修改</a>
+                {% endif %}
+                {% if "DOCUMENT_PUBLISH" in session.permission %}
+                <a class="btn btn-danger btn-xs" href="{{ url_for('document.publish', id=content['id']) }}">发布</a>
+                {% endif %}
+                {% if "DOCUMENT_DELETE" in session.permission %}
+                <a class="btn btn-danger btn-xs" href="{{ url_for('document.delete', id=content['id']) }}">删除</a>
+                {% endif %}
+                <!--<a class="btn btn-danger btn-xs" href="">查看功能</a>-->
+        </div>
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock center %}
