@@ -1,3 +1,4 @@
 *.pyc
 .idea*
 .python-version
+*.sqlite

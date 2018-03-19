@@ -1,0 +1,90 @@
+{% extends 'extends/_base.html' %}
+
+{% block center %}
+<div class="row">
+    <div class="col-lg-12">
+        <button id="click">click</button>
+        <button id="submit">click</button>
+    </div>
+    <div class="col-lg-12">
+        <table class="table table-hover">
+            <thead>
+            <tr id="table-head">
+            </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+    <div>
+      <ul class="pagination">
+        <li class="page-item disabled" id="table-pagination-has-prev">
+          <a class="page-link" href="#">&laquo;</a>
+        </li>
+        <li class="page-item" id="table-pagination-has-next">
+          <a class="page-link" href="#">&raquo;</a>
+        </li>
+      </ul>
+    </div>
+</div>
+
+{% endblock center %}
+
+{% block scripts %}
+{{ super() }}
+<!--jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script>
+var data;
+$(document).ready(function(){
+    $('#click').click(function() {
+        $.ajax({
+            url: '/test',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $.each(data.table.header, function(i, item){
+                    $('#table-head').append('<th scope="col">'+item+'</th>');
+                });
+                $.each(data.table.data, function(i, item){
+                    var body = document.createElement('tr');
+                    $.each(item, function(key, value) {
+                        var td_item = document.createElement('td');
+                        td_item.innerHTML=value;
+                        body.append(td_item);
+                    });
+                    $('#table-body').append(body);
+                });
+                $('#table-head').text();
+                console.log(data.table.header);
+                console.log(data.table.data);
+                console.log(data.table.pages);
+                $('#table-pagination-has-prev a').attr('href', '/9');
+                $.each(data.table.pages, function(i, item) {
+                    var li_item = document.createElement('li');
+                    var a_item = document.createElement('a');
+                    li_item.append(a_item);
+                    a_item.innerHTML=item;
+                    a_item.className = 'page-link';
+                    a_item.href = '/'+item;
+                    if(item==data.table.page) {
+                        li_item.className='page-item active';
+                    } else if(item==null) {
+                        li_item.className='page-item disabled';
+                        a_item.innerHTML='&hellip;';
+                        a_item.href = '#';
+                    } else {
+                        li_item.className='page-item';
+                    };
+                    $('#table-pagination-has-next').before(li_item);
+                });
+                $('#table-pagination-has-next a').attr('href', '/11');
+            },
+            error: function(xhr, type) {},
+        });
+    });
+});
+</script>
+<!--最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+{% endblock scripts %}
