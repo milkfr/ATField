@@ -1,0 +1,10 @@
+{% extends 'extends/_table.html' %}
+
+{% block tbody %}
+{% for user in pagination.items %}
+<tr class="table-active">
+    <th>{{ user.id }}</th>
+    <th>{{ user.name }}</th>
+</tr>
+{% endfor %}
+{% endblock tbody %}
