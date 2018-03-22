@@ -1,10 +1,19 @@
 {% extends 'extends/_table.html' %}
 
+{% block theader %}
+<th>UUID</th>
+<th>用户名</th>
+<th>用户角色</th>
+<th>操作</th>
+{% endblock theader %}
+
 {% block tbody %}
 {% for user in pagination.items %}
 <tr class="table-active">
     <th>{{ user.id }}</th>
     <th>{{ user.name }}</th>
+    <th>{{ user.role_text }}</th>
+    <th><a type="btn-link">编辑</a></th>
 </tr>
 {% endfor %}
 {% endblock tbody %}

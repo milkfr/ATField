@@ -17,3 +17,7 @@ class LoginForm(Form):
     def validate_password(self, field):
         if field.data != "123456":  # current_app.config["PASSWORD"]:
             raise ValidationError("Error password!")
+
+
+class UserForm(Form):
+    username = StringField("用户名", validators=[DataRequired(), Email(), Length(1, 20)])
