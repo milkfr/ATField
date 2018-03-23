@@ -1,14 +1,14 @@
-from random import randint
+from random import randint, choice
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
 from . import db
-from .models.auth import User, Role, UserRole, Permission, Granularity, RolePermission
+from .models.auth import User, Role, UserRole, Permission, Granularity, RolePermission, DEPARTMENT
 
 
 def _generate_fake_role(count=20):
     fake = Faker()
     for i in range(count):
-        r = Role(name=fake.word())
+        r = Role(name=fake.word(), department=choice(DEPARTMENT))
         db.session.add(r)
         try:
             db.session.commit()
@@ -19,8 +19,7 @@ def _generate_fake_role(count=20):
 def _generate_fake_user(count=100):
     fake = Faker()
     for i in range(count):
-        u = User(name=fake.email(),
-                 password="password")
+        u = User(name=fake.email(), department=choice(DEPARTMENT), password="password")
         db.session.add(u)
         try:
             db.session.commit()

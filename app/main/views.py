@@ -6,8 +6,7 @@ from ..models.auth import User
 
 @main.route('/', methods=["GET"])
 def index():
-    user = User.query.all()
-    # return render_template("test.html")
+    return render_template("index.html")
 
 
 @main.route("/test/", defaults={'page': 1})

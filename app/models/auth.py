@@ -3,17 +3,14 @@ import uuid
 from .. import db
 
 
-DEPARTMENT = {
-    "部门1": ["科室1", "科室2", "科室3"],
-    "部门2": ["科室4", "科室5", "科室6"],
-    "部门3": ["科室7", "科室8", "科室9"],
-}
+DEPARTMENT = ["部门1", "部门2", "部门3"]
 
 
 class Role(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(64), unique=True)
+    department = db.Column(db.String(128), unique=False)
     user_role = db.relationship("UserRole", backref="role")
     role_permission = db.relationship("RolePermission", backref="role")
 
@@ -30,8 +27,7 @@ class User(db.Model):
     id = db.Column(db.String(32), primary_key=True)
     name = db.Column(db.String(64), unique=True)
     password_hash = db.Column(db.String(128))
-    # department_one = db.Column(db.String(128))
-    # department_two = db.Column(db.String(128))
+    department = db.Column(db.String(128), unique=False)
     user_role = db.relationship("UserRole", backref="user")
 
     def __repr__(self):
@@ -46,14 +42,17 @@ class User(db.Model):
     #         if set(role_list).issubset(set([role.name for role in Role.query.all()])):
     #
     #             self.password=password
+    def update_user_role(self, role_list):
+
+        return
 
     @property
     def role_list(self):
-        return [user_role.role.name for user_role in self.user_role]
+        return [user_role.role for user_role in self.user_role]
 
     @property
     def role_text(self):
-        return '|'.join([user_role.role.name for user_role in self.user_role])
+        return ' '.join(["{}-{}".format(user_role.role.department, user_role.role.name) for user_role in self.user_role])
 
     @property
     def password(self):
