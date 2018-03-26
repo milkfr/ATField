@@ -1,8 +1,10 @@
 from flask import current_app
 from flask_wtf import Form
+from sqlalchemy import or_
 from wtforms import ValidationError
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField
 from wtforms.validators import DataRequired, Email, Length
+from ..models.auth import DEPARTMENT, Role
 
 
 class LoginForm(Form):
@@ -19,5 +21,19 @@ class LoginForm(Form):
             raise ValidationError("Error password!")
 
 
-class UserForm(Form):
-    username = StringField("用户名", validators=[DataRequired(), Email(), Length(1, 20)])
+class UserUpdateForm(Form):
+    name = StringField("用户名")
+    department = StringField("部门")
+    role = SelectMultipleField("角色", coerce=str)
+    submit = SubmitField("提交")
+
+    def __init__(self, user):
+        super(UserUpdateForm, self).__init__()
+        self.role.choices = [(role.id, role.__repr__()) for role in Role.query.filter(or_(
+            Role.department=="特权", Role.department==user.department)).order_by(Role.department).all()]
+
+    # def validate_department(self, field):
+    #     pass
+    #
+    # def validate_role_list(self, field):
+

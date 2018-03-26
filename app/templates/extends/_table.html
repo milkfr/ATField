@@ -23,13 +23,6 @@
     {% endblock tbody %}
     </tbody>
 </table>
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      ...
-    </div>
-  </div>
-</div>
 <div class="pagination">
     {% import 'macros/_pagination.html' as macros %}
     {{ macros.pagination_widget(pagination, url) }}

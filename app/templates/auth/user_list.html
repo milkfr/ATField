@@ -14,8 +14,8 @@
     <th>{{ user.id }}</th>
     <th>{{ user.name }}</th>
     <th>{{ user.department }}</th>
-    <th>{{ user.role_text }}</th>
-    <th><button type="btn-link" data-toggle="modal" data-target="#myModal">编辑角色</button></th>
+    <th>{% for role in user.role_list%}{{ role.__repr__() }}{% endfor %}</th>
+    <th><a type="btn-link" href="{{ url_for('auth.user_update', id=user.id) }}">编辑角色</a></th>
 </tr>
 {% endfor %}
 {% endblock tbody %}
