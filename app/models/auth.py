@@ -23,16 +23,13 @@ class Role(db.Model):
 
     def delete_permission(self, permission):
         rp = RolePermission.query.filter_by(role=self, permission=permission).first()
-        db.session.delete(ur)
+        db.session.delete(rp)
         db.session.commit()
 
     def add_permission(self, permission):
-        if permission != "特权" and permission.department != self.department:
-            return
-        else:
-            rp = RolePermission(role=self, permission=permission)
-            db.session.add(rp)
-            db.session.commit()
+        rp = RolePermission(role=self, permission=permission)
+        db.session.add(rp)
+        db.session.commit()
 
     @property
     def permission_list(self):
@@ -53,6 +50,7 @@ class User(db.Model):
     def __init__(self, **kwargs):
         super(User,self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
+
 
     def delete_role(self, role):
         ur = UserRole.query.filter_by(user=self, role=role).first()
@@ -102,31 +100,40 @@ class Permission(db.Model):
     __tablename__ = 'permissions'
     id = db.Column(db.String(32), primary_key=True, default=str(uuid.uuid1()))
     name = db.Column(db.String(64), unique=True)
-    department = db.Column(db.String(128), unique=False)
+    endpoint = db.Column(db.String(128), unique=True)
     need_granularity = db.Column(db.Boolean, default=False)
-    granularities = db.relationship("Granularity", backref="permission")
     role_permission = db.relationship("RolePermission", backref="permission")
 
     def __repr__(self):
-        return "<{}-{}>".format(self.department, self.name)
+        return "<{}-{}>".format(self.name, self.endpoint)
 
     def __init__(self, **kwargs):
         super(Permission, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
 
-class Granularity(db.Model):
-    __tablename__ = "granularities"
-    id = db.Column(db.String(32), primary_key=True, default=str(uuid.uuid1()))
-    name = db.Column(db.String(64), unique=True)
-    permission_id = db.Column(db.String(32), db.ForeignKey("permissions.id"))
+    @classmethod
+    def get_models(self):
+        data = {}
+        for item in Permission.query.all():
+            data[item.endpoint.split('.')[0]] = []
+        for item in Permission.query.all():
+            data[item.endpoint.split('.')[0]].append(item)
+        return data
 
-    def __repr__(self):
-        return "<Granularity {}->{}>".format(self.permission, self.name)
 
-    def __init__(self, **kwargs):
-        super(Granularity, self).__init__(**kwargs)
-        self.id = str(uuid.uuid1())
+# class Granularity(db.Model):
+#     __tablename__ = "granularities"
+#     id = db.Column(db.String(32), primary_key=True, default=str(uuid.uuid1()))
+#     name = db.Column(db.String(64), unique=True)
+#     permission_id = db.Column(db.String(32), db.ForeignKey("permissions.id"))
+#
+#     def __repr__(self):
+#         return "<Granularity {}->{}>".format(self.permission, self.name)
+#
+#     def __init__(self, **kwargs):
+#         super(Granularity, self).__init__(**kwargs)
+#         self.id = str(uuid.uuid1())
 
 
 class RolePermission(db.Model):

@@ -4,7 +4,7 @@ from sqlalchemy import or_
 from wtforms import ValidationError
 from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField
 from wtforms.validators import DataRequired, Email, Length
-from ..models.auth import DEPARTMENT, Role
+from ..models.auth import DEPARTMENT, Role, Permission
 
 
 class LoginForm(Form):
@@ -22,8 +22,8 @@ class LoginForm(Form):
 
 
 class UserUpdateForm(Form):
-    name = StringField("用户名")
-    department = StringField("部门")
+    name = StringField("用户名", render_kw={"disabled": "disabled"})
+    department = StringField("部门", render_kw={"disabled": "disabled"})
     role = SelectMultipleField("角色", coerce=str)
     submit = SubmitField("提交")
 
@@ -37,3 +37,13 @@ class UserUpdateForm(Form):
     #
     # def validate_role_list(self, field):
 
+
+class RoleUpdateForm(Form):
+    name = StringField("角色名", render_kw={"disabled": "disabled"})
+    department = StringField("部门", render_kw={"disabled": "disabled"})
+    permission = SelectMultipleField("权限", coerce=str)
+    submit = SubmitField("提交")
+
+    def __init__(self, role):
+        super(RoleUpdateForm, self).__init__()
+        self.permission.choices = [(permission.id, permission.__repr__()) for permission in Permission.query.all()]
