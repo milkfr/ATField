@@ -4,8 +4,8 @@
 <th>UUID</th>
 <th>角色名</th>
 <th>部门</th>
-<th>操作</th>
 <th>权限</th>
+<th>操作</th>
 {% endblock theader %}
 
 {% block tbody %}
@@ -16,7 +16,6 @@
     <th>{{ role.department }}</th>
     <th>{% for permission in role.permission_list %}{{ permission.__repr__() }}{% endfor %}</th>
     <th><a type="btn-link" href="{{ url_for('auth.role_update', id=role.id) }}">编辑权限</a></th>
-    <th><a type="btn-link" href="#">删除角色</a></th>
 </tr>
 {% endfor %}
 {% endblock tbody %}

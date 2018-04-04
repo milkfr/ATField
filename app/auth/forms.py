@@ -8,18 +8,9 @@ from ..models.auth import DEPARTMENT, Role, Permission
 
 
 class LoginForm(Form):
-    username = StringField("Username", validators=[DataRequired(), Email(), Length(1, 20)])
+    username = StringField("Username", validators=[DataRequired(), Length(1, 20)])
     password = PasswordField("Password", validators=[DataRequired(), Length(6, 12)])
     submit = SubmitField("Login")
-
-    def validate_username(self, field):
-        if field.data != "123@123.com":  # current_app.config["Username"]:
-            raise ValidationError("Error username!")
-
-    def validate_password(self, field):
-        if field.data != "123456":  # current_app.config["PASSWORD"]:
-            raise ValidationError("Error password!")
-
 
 class UserUpdateForm(Form):
     name = StringField("用户名", render_kw={"disabled": "disabled"})

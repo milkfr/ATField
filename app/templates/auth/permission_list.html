@@ -5,7 +5,7 @@
 <th>权限名</th>
 <th>模块</th>
 <th>是否更细粒度</th>
-<th>操作</th>
+<th>粒度</th>
 {% endblock theader %}
 
 {% block tbody %}
@@ -15,7 +15,7 @@
     <th>{{ permission.name }}</th>
     <th>{{ permission.endpoint }}</th>
     <th>{{ permission.need_granularity }}</th>
-    <th><a type="btn-link" href="{{ url_for('auth.permission_update', id=permission.id) }}">编辑权限</a></th>
+    <th>{{ permission.granularity_list }}</th>
 </tr>
 {% endfor %}
 {% endblock tbody %}

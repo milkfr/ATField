@@ -6,3 +6,5 @@
 * 树型机构
 * 用户与角色N：N
 * 一个用户只能拥有多个自己部门的角色和多个特权角色
+
+http://www.profsandhu.com/articles/advcom/adv_comp_rbac.pdf

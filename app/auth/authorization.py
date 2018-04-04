@@ -4,15 +4,8 @@ from ..models.auth import User, Role, Permission
 from . import auth
 from .forms import UserUpdateForm, RoleUpdateForm
 
+
 ### 用户管理
-# 用户详情
-@auth.route("/user/info", methods=["GET"])
-def user_info():
-    user_id = request.args.get("id", "", type=str)
-
-    return jsonify({"id":"123"})
-
-
 @auth.route("/user/list", methods=["GET"])
 def user_list():
     # 获取用户列表
