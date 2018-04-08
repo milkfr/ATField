@@ -4,7 +4,7 @@ from ..models.auth import User, Permission
 
 @auth.before_app_request
 def permission_required():
-    WHITELIST = ["auth.login", "auth.logout", "main.index"]
+    WHITELIST = ["auth.login", "auth.logout", "main.index", "bootstrap.static", "static"]
     if request.endpoint in WHITELIST:
         return
     id = session.get("id", None)
