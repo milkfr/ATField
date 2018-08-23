@@ -1,0 +1,21 @@
+{% extends 'extends/_table.html' %}
+
+{% block theader %}
+<th>UUID</th>
+<th>用户名</th>
+<th>部门</th>
+<th>角色</th>
+<th>操作</th>
+{% endblock theader %}
+
+{% block tbody %}
+{% for user in pagination.items %}
+<tr class="table-active">
+    <th>{{ user.id }}</th>
+    <th>{{ user.name }}</th>
+    <th>{{ user.department }}</th>
+    <th>{% for role in user.role_list%}{{ role.__repr__() }}{% endfor %}</th>
+    <th><a type="btn-link" href="{{ url_for('auth.user_update', id=user.id) }}">编辑角色</a></th>
+</tr>
+{% endfor %}
+{% endblock tbody %}

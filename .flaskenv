@@ -1,0 +1,4 @@
+FLASK_APP=wsgi.py
+FLASK_ENV=development
+FLASK_SECRET_KEY=123
+FLASK_CONFIG=default

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    {% block metas %}
+    {% endblock metas %}
+
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <link rel="bookmark" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+
+    {% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <style type="text/css">
+        body {
+            padding-top: 150px;
+        }
+        <!--img {-->
+            <!--max-width: 100%;-->
+        <!--}-->
+    </style>
+    {% endblock styles %}
+    {% endblock head %}
+
+</head>
+<body>
+{% block body %}
+{% block navbar %}
+{% include 'includes/_navbar.html' %}
+{% endblock navbar %}
+
+{% block content %}
+<div class="container">
+    {% block header %}
+    {% endblock header %}
+
+    {% block center %}
+    {% endblock center%}
+
+    {% block footer %}
+    {% include 'includes/_footer.html' %}
+    {% endblock footer %}
+</div>
+{% endblock content %}
+
+{% block modal %}
+<div class="modal" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock modal %}
+
+{% block scripts %}
+ <!--jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+ <!--最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+{% endblock scripts %}
+{% endblock body %}
+</body>
+</html>
