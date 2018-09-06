@@ -3,3 +3,5 @@
 .python-version
 *.sqlite
 *.iml
+.flaskenv
+*/.DS_Store
