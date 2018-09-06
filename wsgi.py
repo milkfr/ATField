@@ -1,7 +1,7 @@
 import os
 import flask
-from app import create_app, db
-from app.models.auth import User, Role, UserRole, Permission, RolePermission, Granularity
+from app import create_app, db, es
+from app.models.auth import User, Role, UserRole, Permission, RolePermission
 
 dotenv_path = os.path.join(os.path.dirname(__file__), ".flaskenv")
 if os.path.exists(dotenv_path):
@@ -12,9 +12,9 @@ app = create_app(os.environ.get("FLASK_CONFIG", default="err"))
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, db=db,
+    return dict(app=app, db=db, es=es,
                 User=User, Role=Role, UserRole=UserRole,
-                Permission=Permission, RolePermission=RolePermission, Granularity=Granularity)
+                Permission=Permission, RolePermission=RolePermission)
 
 
 @app.cli.command()

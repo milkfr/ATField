@@ -4,8 +4,6 @@
 <th>UUID</th>
 <th>权限名</th>
 <th>模块</th>
-<th>是否更细粒度</th>
-<th>粒度</th>
 {% endblock theader %}
 
 {% block tbody %}
@@ -14,8 +12,6 @@
     <th>{{ permission.id }}</th>
     <th>{{ permission.name }}</th>
     <th>{{ permission.endpoint }}</th>
-    <th>{{ permission.need_granularity }}</th>
-    <th>{{ permission.granularity_list }}</th>
 </tr>
 {% endfor %}
 {% endblock tbody %}

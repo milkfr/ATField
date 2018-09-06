@@ -48,7 +48,7 @@ class User(db.Model):
         return "<User {}>".format(self.name)
 
     def __init__(self, **kwargs):
-        super(User,self).__init__(**kwargs)
+        super(User, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
     def can(self, permission):
@@ -101,15 +101,25 @@ class UserRole(db.Model):
         super(UserRole, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
+    @staticmethod
+    def delete_relationship_by_role(role):
+        for ur in UserRole.query.filter(UserRole.role == role).all():
+            db.session.delete(ur)
+        db.session.commit()
+
+    @staticmethod
+    def delete_relationship_by_user(user):
+        for ur in UserRole.query.filter(UserRole.user == user).all():
+            db.session.delete(ur)
+        db.session.commit()
+
 
 class Permission(db.Model):
     __tablename__ = 'permissions'
-    id = db.Column(db.String(32), primary_key=True, default=str(uuid.uuid1()))
+    id = db.Column(db.String(32), primary_key=True)
     name = db.Column(db.String(64), unique=True)
     endpoint = db.Column(db.String(128), unique=True)
-    need_granularity = db.Column(db.Boolean, default=False)
     role_permission = db.relationship("RolePermission", backref="permission")
-    granularity = db.relationship("Granularity", backref="permission")
 
     def __repr__(self):
         return "<{}-{}>".format(self.name, self.endpoint)
@@ -117,10 +127,6 @@ class Permission(db.Model):
     def __init__(self, **kwargs):
         super(Permission, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
-
-    @property
-    def granularity_list(self):
-        return [granularity.__repr__() for granularity in self.granularity]
 
     @classmethod
     def get_models(cls):
@@ -133,23 +139,9 @@ class Permission(db.Model):
         return data
 
 
-class Granularity(db.Model):
-    __tablename__ = "granularities"
-    id = db.Column(db.String(32), primary_key=True, default=str(uuid.uuid1()))
-    name = db.Column(db.String(64), unique=True)
-    permission_id = db.Column(db.String(32), db.ForeignKey("permissions.id"))
-
-    def __repr__(self):
-        return "<{}>".format(self.name)
-
-    def __init__(self, **kwargs):
-        super(Granularity, self).__init__(**kwargs)
-        self.id = str(uuid.uuid1())
-
-
 class RolePermission(db.Model):
     __tablename__ = "role_permission"
-    id = db.Column(db.String(32), primary_key=True, default=str(uuid.uuid1()))
+    id = db.Column(db.String(32), primary_key=True)
     role_id = db.Column(db.String(32), db.ForeignKey("roles.id"))
     permission_id = db.Column(db.String(32), db.ForeignKey("permissions.id"))
 
@@ -159,3 +151,15 @@ class RolePermission(db.Model):
     def __init__(self, **kwargs):
         super(RolePermission, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
+
+    @staticmethod
+    def delete_relationship_by_role(role):
+        for rp in RolePermission.query.filter(RolePermission.role == role).all():
+            db.session.delete(rp)
+        db.session.commit()
+
+    @staticmethod
+    def delete_relationship_by_permission(permission):
+        for rp in RolePermission.query.filter(RolePermission.permission == permission).all():
+            db.session.delete(rp)
+        db.session.commit()

@@ -1,17 +1,17 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from sqlalchemy import or_
 from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
 from wtforms.validators import DataRequired, Length
 from ..models.auth import Role, Permission
 
 
-class LoginForm(Form):
-    username = StringField("Username", validators=[DataRequired(), Length(1, 20)])
-    password = PasswordField("Password", validators=[DataRequired(), Length(6, 12)])
-    submit = SubmitField("Login")
+class LoginForm(FlaskForm):
+    username = StringField("用户名", validators=[DataRequired(), Length(1, 20)])
+    password = PasswordField("密码", validators=[DataRequired(), Length(6, 12)])
+    submit = SubmitField("登录")
 
 
-class UserUpdateForm(Form):
+class UserUpdateForm(FlaskForm):
     name = StringField("用户名", render_kw={"disabled": "disabled"})
     department = StringField("部门", render_kw={"disabled": "disabled"})
     role = SelectMultipleField("角色", coerce=str)
@@ -28,7 +28,7 @@ class UserUpdateForm(Form):
     # def validate_role_list(self, field):
 
 
-class RoleUpdateForm(Form):
+class RoleUpdateForm(FlaskForm):
     name = StringField("角色名", render_kw={"disabled": "disabled"})
     department = StringField("部门", render_kw={"disabled": "disabled"})
     permission = SelectMultipleField("权限", coerce=str)

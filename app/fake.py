@@ -2,7 +2,7 @@ from random import randint, choice
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
 from . import db
-from .models.auth import User, Role, UserRole, Permission, RolePermission, DEPARTMENT, Granularity
+from .models.auth import User, Role, UserRole, Permission, RolePermission, DEPARTMENT
 
 
 def _generate_fake_role(count=20):
@@ -45,21 +45,8 @@ def _generate_fake_permission(count=20, url_map=None):
             db.session.rollback()
 
 
-def _generate_fake_granulatiry(count=20):
-    fake = Faker()
-    for i in range(count):
-        g = Granularity(name=fake.word(),
-                 permission=Permission.query.offset(randint(0, Permission.query.count()-1)).first())
-        db.session.add(g)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-
-
-def generate_fake_auth(permission_count=20, granularity_count=20, user_count=100, role_count=20, url_map=None):
+def generate_fake_auth(permission_count=20, user_count=100, role_count=20, url_map=None):
     _generate_fake_permission(permission_count, url_map=url_map)
-    _generate_fake_granulatiry(granularity_count)
     _generate_fake_role(role_count)
     _generate_fake_user(user_count)
     # generate fake user role relationship

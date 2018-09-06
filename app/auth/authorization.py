@@ -86,12 +86,6 @@ def permission_list():
     return render_template("auth/permission_list.html", pagination=pagination, url="auth.permission_list")
 
 
-@auth.route("/permission/update", methods=["GET", "POST"])
-def permission_update():
-    id = request.args.get("id", "", type=str)
-    return
-
-
 # TODO:
 # 新增用户
 # 删除用户
