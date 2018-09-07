@@ -2,7 +2,7 @@ from random import randint, choice
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
 from . import db
-from .models.auth import User, Role, UserRole, Permission, RolePermission, DEPARTMENT
+from .models.auth import User, Role, Permission, DEPARTMENT
 
 
 def _generate_fake_role(count=20):

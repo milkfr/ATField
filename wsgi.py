@@ -20,42 +20,43 @@ def make_shell_context():
 @app.cli.command()
 def fake():
     from app.fake import generate_fake_auth
-    db.drop_all()
-    db.create_all()
-    # Add user
-
-    # Add user
-    u1 = User(name="aaa", department="部门1", password="123456")
-    u2 = User(name="bbb", department="部门1", password="123456")
-    u3 = User(name="ccc", department="部门1", password="123456")
-    db.session.add_all([u1, u2, u3])
-    r1 = Role(name="role1", department="部门1")
-    r2 = Role(name="role2", department="部门1")
-    r3 = Role(name="admin", department="特权")
-    db.session.add_all([r1, r2, r3])
-    ur1 = UserRole(user=u1, role=r1)
-    ur2 = UserRole(user=u1, role=r3)
-    ur3 = UserRole(user=u2, role=r2)
-    ur4 = UserRole(user=u3, role=r1)
-    db.session.add_all([ur1, ur2, ur3, ur4])
-    p1 = Permission(name="用户列表查看", endpoint="auth.user_list")
-    p2 = Permission(name="用户角色设定", endpoint="auth.user_update")
-    p3 = Permission(name="角色列表查看", endpoint="auth.role_list")
-    p4 = Permission(name="角色权限设定", endpoint="auth.role_update")
-    p5 = Permission(name="权限列表查看", endpoint="auth.permission_list")
-    db.session.add_all([p1, p2, p3, p4, p5])
-    rp1 = RolePermission(role=r3, permission=p1)
-    rp2 = RolePermission(role=r3, permission=p2)
-    rp3 = RolePermission(role=r3, permission=p3)
-    rp4 = RolePermission(role=r3, permission=p4)
-    rp5 = RolePermission(role=r3, permission=p5)
-    db.session.add_all([rp1, rp2, rp3, rp4, rp5])
-    db.session.commit()
-
-    # generate_fake_auth(url_map=app.url_map)
+    generate_fake_auth(url_map=app.url_map)
 
 
 @app.cli.command()
 def deploy():
-    """Run deployment tasks."""
+    db.drop_all()
+    db.create_all()
+    # add user
+    user_info_list = [
+        {"name": "aaa", "department": "部门1", "password": "123456"},
+        {"name": "bbb", "department": "部门1", "password": "123456"},
+        {"name": "ccc", "department": "部门1", "password": "123456"},
+    ]
+    User.insert_items(user_info_list)
 
+    # add role
+    role_info_list = {
+        {"name": "admin", "department": "特权"},
+        {"name": "role1", "department": "部门1"},
+        {"name": "role2", "department": "部门1"},
+    }
+    Role.insert_items(role_info_list)
+
+    # add permission
+    permission_info_list = [
+        {"name": "用户列表查看", "endpoint": "auth.user_list"},
+        {"name": "用户角色设定", "endpoint": "auth.user_update"},
+        {"name": "角色列表查看", "endpoint": "auth.role_list"},
+        {"name": "角色权限设定", "endpoint": "auth.role_update"},
+        {"name": "权限列表查看", "endpoint": "auth.permission_list"},
+    ]
+    Permission.insert_items(permission_info_list)
+
+    # add auth relationship
+    admin_user = User.query.first()
+    admin_role = Role.query.first()
+    admin_user.update_role_by_id(delete_role_list=[], add_role_list=[admin_role.id])
+
+    admin_role.update_permission_by_id(delete_permission_list=[],
+                                       add_permission_list=[permission.id for permission in Permission.query.all()])

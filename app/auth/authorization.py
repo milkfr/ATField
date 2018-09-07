@@ -27,13 +27,10 @@ def user_update():
         role_id_list = form.role.data
         old_role_id_list = [user_role.role.id for user_role in user.user_role]
         # 删掉user已有但新增没有的差集
-        delete_role_id = list(set(old_role_id_list).difference(set(role_id_list)))
-        for role_id in delete_role_id:
-            user.delete_role(Role.query.filter(Role.id == role_id).first())
+        delete_role_list = list(set(old_role_id_list).difference(set(role_id_list)))
         # 新增已有但user没有差集
-        add_role_id = list(set(role_id_list).difference(set(old_role_id_list)))
-        for role_id in add_role_id:
-            user.add_role(Role.query.filter(Role.id == role_id).first())
+        add_role_list = list(set(role_id_list).difference(set(old_role_id_list)))
+        user.update_role_by_id(delete_role_list, add_role_list)
         return redirect(url_for("auth.user_list"))
     form.name.data = user.name
     form.department.data = user.department
@@ -63,13 +60,10 @@ def role_update():
         permission_id_list = form.permission.data
         old_permission_id_list = [permission.id for permission in role.permission_list]
         # 删掉role已有但新增没有的差集
-        delete_permission_id = list(set(old_permission_id_list).difference(set(permission_id_list)))
-        for permission_id in delete_permission_id:
-            role.delete_permission(Permission.query.filter(Permission.id == permission_id).first())
+        delete_permission_list = list(set(old_permission_id_list).difference(set(permission_id_list)))
         # 新增已有但user没有的差集
-        add_permission_id = list(set(permission_id_list).difference(set(old_permission_id_list)))
-        for permission_id in add_permission_id:
-            role.add_permission(Permission.query.filter(Permission.id == permission_id).first())
+        add_permission_list = list(set(permission_id_list).difference(set(old_permission_id_list)))
+        role.update_permission_by_id(delete_permission_list, add_permission_list)
         return redirect(url_for("auth.role_list"))
     return render_template("auth/role_update.html", role=role, Permission=Permission)
 
@@ -84,12 +78,3 @@ def permission_list():
         page=page, per_page=per_page, error_out=False
     )
     return render_template("auth/permission_list.html", pagination=pagination, url="auth.permission_list")
-
-
-# TODO:
-# 新增用户
-# 删除用户
-# 新增角色
-# 删除角色
-# 粒度限制
-

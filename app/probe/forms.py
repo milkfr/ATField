@@ -17,7 +17,6 @@ class HostForm(FlaskForm):
         super(HostForm, self).__init__()
 
 
-
 class ServiceForm(FlaskForm):
     port = IntegerField("端口", render_kw={"disabled": "disabled"})
     tunnel = StringField("通道", render_kw={"disabled": "disabled"})
@@ -29,7 +28,6 @@ class ServiceForm(FlaskForm):
 
     def __init__(self, service_id):
         super(ServiceForm, self).__init__()
-
 
 
 class DomainForm(FlaskForm):

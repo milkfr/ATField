@@ -21,19 +21,35 @@ class Role(db.Model):
         super(Role, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
-    def delete_permission(self, permission):
-        rp = RolePermission.query.filter(RolePermission.role == self, RolePermission.permission == permission).first()
-        db.session.delete(rp)
-        db.session.commit()
-
-    def add_permission(self, permission):
-        rp = RolePermission(role=self, permission=permission)
-        db.session.add(rp)
+    def update_permission_by_id(self, delete_permission_list, add_permission_list):
+        for permission_id in delete_permission_list:
+            rp = RolePermission.query.filter(RolePermission.role == self,
+                                             RolePermission.permission_id == permission_id).first()
+            db.session.delete(rp)
+        for permission_id in add_permission_list:
+            rp = RolePermission(role=self, permission_id=permission_id)
+            db.session.add(rp)
         db.session.commit()
 
     @property
     def permission_list(self):
         return [role_permission.permission for role_permission in self.role_permission]
+
+    @staticmethod
+    def insert_items(role_info_list):
+        # role_info_list = [{"name": None, "department": None}, {...}]
+        for role_info in role_info_list:
+            role = Role(name=role_info["name"], department=role_info["department"])
+            db.session.add(role)
+        db.session.commit()
+
+    def delete_item(self):
+        for ur in UserRole.query.filter(UserRole.role == self).all():
+            db.session.delete(ur)
+        for rp in RolePermission.query.filter(RolePermission.role == self).all():
+            db.session.delete(rp)
+        db.session.delete(self)
+        db.session.commit()
 
 
 class User(db.Model):
@@ -59,22 +75,14 @@ class User(db.Model):
             return True
         return False
 
-    def delete_role(self, role):
-        ur = UserRole.query.filter(UserRole.user == self, UserRole.role == role).first()
-        db.session.delete(ur)
-        db.session.commit()
-
-    def add_role(self, role):
-        if role.department != "特权" and role.department != self.department:
-            return
-        else:
-            ur = UserRole(user=self, role=role)
+    def update_role_by_id(self, delete_role_list, add_role_list):
+        for role_id in delete_role_list:
+            ur = UserRole.query.filter(UserRole.user == self, UserRole.role_id == role_id).first()
+            db.session.delete(ur)
+        for role_id in add_role_list:
+            ur = UserRole(user=self, role_id=role_id)
             db.session.add(ur)
-            db.session.commit()
-
-    @property
-    def role_list(self):
-        return [user_role.role for user_role in self.user_role]
+        db.session.commit()
 
     @property
     def password(self):
@@ -86,6 +94,24 @@ class User(db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    @property
+    def role_list(self):
+        return [user_role.role for user_role in self.user_role]
+
+    @staticmethod
+    def insert_items(user_info_list):
+        # user_info_list = [{"name": None, "department": None, "password": "None"}, {...}]
+        for user_info in user_info_list:
+            user = User(name=user_info["name"], department=user_info["department"], password=user_info["password"])
+            db.session.add(user)
+        db.session.commit()
+
+    def delete_item(self):
+        for ur in UserRole.query.filter(UserRole.user == self).all():
+            db.session.delete(ur)
+        db.session.delete(self)
+        db.session.commit()
 
 
 class UserRole(db.Model):
@@ -100,18 +126,6 @@ class UserRole(db.Model):
     def __init__(self, **kwargs):
         super(UserRole, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
-
-    @staticmethod
-    def delete_relationship_by_role(role):
-        for ur in UserRole.query.filter(UserRole.role == role).all():
-            db.session.delete(ur)
-        db.session.commit()
-
-    @staticmethod
-    def delete_relationship_by_user(user):
-        for ur in UserRole.query.filter(UserRole.user == user).all():
-            db.session.delete(ur)
-        db.session.commit()
 
 
 class Permission(db.Model):
@@ -128,8 +142,8 @@ class Permission(db.Model):
         super(Permission, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
-    @classmethod
-    def get_models(cls):
+    @staticmethod
+    def get_models():
         # 显示所有权限分类
         data = {}
         for item in Permission.query.all():
@@ -137,6 +151,20 @@ class Permission(db.Model):
         for item in Permission.query.all():
             data[item.endpoint.split('.')[0]].append(item)
         return data
+
+    @staticmethod
+    def insert_items(permission_info_list):
+        # permission_info_list = [{"name": None, "endpoint": None}, {...}]
+        for permission_info in permission_info_list:
+            permission = Permission(name=permission_info["name"], endpoint=permission_info["endpoint"])
+            db.session.add(permission)
+        db.session.commit()
+
+    def delete_item(self):
+        for rp in RolePermission.query.filter(RolePermission.permission == self).all():
+            db.session.delete(rp)
+        db.session.delete(self)
+        db.session.commit()
 
 
 class RolePermission(db.Model):
@@ -151,15 +179,3 @@ class RolePermission(db.Model):
     def __init__(self, **kwargs):
         super(RolePermission, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
-
-    @staticmethod
-    def delete_relationship_by_role(role):
-        for rp in RolePermission.query.filter(RolePermission.role == role).all():
-            db.session.delete(rp)
-        db.session.commit()
-
-    @staticmethod
-    def delete_relationship_by_permission(permission):
-        for rp in RolePermission.query.filter(RolePermission.permission == permission).all():
-            db.session.delete(rp)
-        db.session.commit()

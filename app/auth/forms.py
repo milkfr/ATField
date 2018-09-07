@@ -22,11 +22,6 @@ class UserUpdateForm(FlaskForm):
         self.role.choices = [(role.id, role.__repr__()) for role in Role.query.filter(or_(
             Role.department == "特权", Role.department == user.department)).order_by(Role.department).all()]
 
-    # def validate_department(self, field):
-    #     pass
-    #
-    # def validate_role_list(self, field):
-
 
 class RoleUpdateForm(FlaskForm):
     name = StringField("角色名", render_kw={"disabled": "disabled"})

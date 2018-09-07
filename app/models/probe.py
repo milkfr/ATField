@@ -19,16 +19,8 @@ class Host(db.Model):
         super(Host, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
-    @property
-    def service_list(self):
-        return [service for service in self.services]
-
-    @property
-    def domain_list(self):
-        return [host_domain.domain for host_domain in self.host_domain]
-
     @staticmethod
-    def insert_hosts(host_info_list):
+    def insert_items(host_info_list):
         # host_info_list = [{"ip": None, "name": None, "description": None}, {...}]
         for host_info in host_info_list:
             host = Host(ip=host_info["ip"], name=host_info["name"], description=host_info["description"])
@@ -49,7 +41,8 @@ class Host(db.Model):
     def delete_item(self):
         for service in self.services:
             db.session.delete(service)
-        HostDomain.delete_relationship_by_host(self)
+        for hd in HostDomain.query.filter(HostDomain.host == self).all():
+            db.session.delete(hd)
         db.session.delete(self)
         db.session.commit()
 
@@ -73,7 +66,7 @@ class Service(db.Model):
         self.id = str(uuid.uuid1())
 
     @staticmethod
-    def insert_services(service_info_list):
+    def insert_items(service_info_list):
         # service_info_list = [{"ip": None, "port": None, "tunnel": None, "protocol": None,
         # "state": None, "name": None, "description": None}, {...}]
         for service_info in service_info_list:
@@ -116,12 +109,8 @@ class Domain(db.Model):
         super(Domain, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
-    @property
-    def host_list(self):
-        return [host_domain.host for host_domain in self.host_domain]
-
     @staticmethod
-    def insert_domains(domain_info_list):
+    def insert_items(domain_info_list):
         # domain_info_list = [{"name": None, "description", None}, {...}]
         for domain_info in domain_info_list:
             domain = Domain(name=domain_info["name"], description=domain_info["description"])
@@ -130,7 +119,8 @@ class Domain(db.Model):
 
     def update_probe_info(self, ips):
         # ips = ["0.0.0.1", "1.1.1.1"]
-        HostDomain.delete_relationship_by_domain(self)
+        for hd in HostDomain.query.filter(HostDomain.doamin == self).all():
+            db.session.delete(hd)
         for ip in ips:
             host = Host.query.filter(Host.ip == ip).first()
             hd = HostDomain(host=host, domain=self)
@@ -161,15 +151,3 @@ class HostDomain(db.Model):
     def __init__(self, **kwargs):
         super(HostDomain, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
-
-    @staticmethod
-    def delete_relationship_by_domain(domain):
-        for hd in HostDomain.query.filter(HostDomain.domain == domain).all():
-            db.session.delete(hd)
-        db.session.commit()
-
-    @staticmethod
-    def delete_relationship_by_host(host):
-        for hd in HostDomain.query.filter(HostDomain.host == host).all():
-            db.session.delete(hd)
-        db.session.commit()
