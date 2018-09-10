@@ -3,7 +3,7 @@ import uuid
 from .. import db
 
 
-DEPARTMENT = ["部门1", "部门2", "部门3"]
+DEPARTMENT = ["信息安全"]
 
 
 class Role(db.Model):

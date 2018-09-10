@@ -11,7 +11,7 @@ def user_list():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
-    pagination = User.query.filter(User.name.ilike('%'+key+'%')).paginate(
+    pagination = User.query.filter(User.name.ilike("%{}%".format(key))).paginate(
         page=page, per_page=per_page, error_out=False
     )
     return render_template("auth/user_list.html", pagination=pagination, url='auth.user_list')
@@ -44,7 +44,7 @@ def role_list():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
-    pagination = Role.query.filter(Role.name.ilike('%'+key+'%')).paginate(
+    pagination = Role.query.filter(Role.name.ilike("%{}%".format(key))).paginate(
         page=page, per_page=per_page, error_out=False
     )
     return render_template("auth/role_list.html", pagination=pagination, url='auth.role_list')
@@ -74,7 +74,7 @@ def permission_list():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "", type=str)
-    pagination = Permission.query.filter(Permission.name.ilike('%'+key+'%')).paginate(
+    pagination = Permission.query.filter(Permission.name.ilike("%{}%".format(key))).paginate(
         page=page, per_page=per_page, error_out=False
     )
     return render_template("auth/permission_list.html", pagination=pagination, url="auth.permission_list")

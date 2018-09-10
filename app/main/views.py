@@ -1,4 +1,4 @@
-from flask import abort, render_template, jsonify, url_for
+from flask import abort, render_template, jsonify, url_for, current_app, send_from_directory
 
 from . import main
 from ..models.auth import User
@@ -17,3 +17,8 @@ def test(page=1):
         page, per_page=5, error_out=False
     )
     return render_template('test.html', theaders=theaders, pagination=pagination, url='main.test')
+
+
+@main.route("/download/<path:filename>")
+def download(filename):
+    return send_from_directory(current_app.config['BASEDIR'], filename, as_attachment=True)

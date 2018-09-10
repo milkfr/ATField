@@ -19,6 +19,10 @@ class Host(db.Model):
         super(Host, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
+    @property
+    def domain_list(self):
+        return [host_domain.domain for host_domain in self.host_domain]
+
     @staticmethod
     def insert_items(host_info_list):
         # host_info_list = [{"ip": None, "name": None, "description": None}, {...}]
@@ -50,16 +54,17 @@ class Host(db.Model):
 class Service(db.Model):
     __tablename__ = "services"
     id = db.Column(db.String(32), primary_key=True)
-    port = db.Column(db.Integer, unique=True)
+    port = db.Column(db.Integer)
     tunnel = db.Column(db.String(32))
     protocol = db.Column(db.String(32))
     state = db.Column(db.String(10))
+    service = db.Column(db.String(50))
     name = db.Column(db.String(50))
     description = db.Column(db.String(500))
     host_id = db.Column(db.String(32), db.ForeignKey("hosts.id"))
 
     def __repr__(self):
-        return "<Service {} {} {} {}>".format(self.port, self.tunnel, self.protocol, self.name)
+        return "<Service {} {} {} {} {}>".format(self.port, self.tunnel, self.protocol, self.service, self.name)
 
     def __init__(self, **kwargs):
         super(Service, self).__init__(**kwargs)
@@ -68,11 +73,12 @@ class Service(db.Model):
     @staticmethod
     def insert_items(service_info_list):
         # service_info_list = [{"ip": None, "port": None, "tunnel": None, "protocol": None,
-        # "state": None, "name": None, "description": None}, {...}]
+        # "state": None, "service": None, "name": None, "description": None}, {...}]
         for service_info in service_info_list:
             host = Host.query.filter(Host.ip == service_info["ip"]).first()
             service = Service(host=host, port=service_info["port"], tunnel=service_info["tunnel"],
                               protocol=service_info["protocol"], state=service_info["state"],
+                              service=service_info["service"],
                               name=service_info["name"], description=service_info["description"])
             db.session.add(service)
         db.session.commit()
@@ -83,10 +89,11 @@ class Service(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_probe_info(self, tunnel, protocol, state):
+    def update_probe_info(self, tunnel, protocol, state, service):
         self.tunnel = tunnel
         self.tunnel = protocol
         self.state = state
+        self.service = service
         db.session.add(self)
         db.session.commit()
 
@@ -109,6 +116,10 @@ class Domain(db.Model):
         super(Domain, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
+    @property
+    def host_list(self):
+        return [host_domain.host for host_domain in self.host_domain]
+
     @staticmethod
     def insert_items(domain_info_list):
         # domain_info_list = [{"name": None, "description", None}, {...}]
@@ -119,7 +130,7 @@ class Domain(db.Model):
 
     def update_probe_info(self, ips):
         # ips = ["0.0.0.1", "1.1.1.1"]
-        for hd in HostDomain.query.filter(HostDomain.doamin == self).all():
+        for hd in HostDomain.query.filter(HostDomain.domain == self).all():
             db.session.delete(hd)
         for ip in ips:
             host = Host.query.filter(Host.ip == ip).first()
@@ -130,7 +141,7 @@ class Domain(db.Model):
     def update_info(self, name, description):
         self.name = name
         self.description = description
-        db.session.add()
+        db.session.add(self)
         db.session.commit()
 
     def delete_item(self):

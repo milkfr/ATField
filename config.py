@@ -4,6 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    BASEDIR = basedir
     SECRET_KEY = os.environ.get("FLASK_SECRET_KEY", "hard to guess string")
     SQLALCHEMY_RECORD_QUERIES = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
