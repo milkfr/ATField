@@ -16,11 +16,18 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get("FLASK_TEST_DATABASE_URI",
+    SQLALCHEMY_DATABASE_URI = os.environ.get("FLASK_DEVELOPMENT_DATABASE_URI",
                                              "sqlite:///"+os.path.join(basedir, "data-dev.sqlite"))
     ELASTICSEARCH_HOST = os.environ.get("FLASK_ELASTICSEARCH_HOST", "localhost:9200")
 
 
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ.get("FLASK_PRODUCTION_DATABASE_URI",
+                                             "sqlite:///"+os.path.join(basedir, "data-pro.sqlite"))
+
+
 config = {
-    "default": DevelopmentConfig
+    "default": DevelopmentConfig,
+    "production": ProductionConfig,
+    "development": DevelopmentConfig,
 }
