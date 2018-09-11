@@ -4,7 +4,7 @@ from .. import db
 
 class Host(db.Model):
     __tablename__ = "hosts"
-    id = db.Column(db.String(32), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     ip = db.Column(db.String(20), unique=True)
     name = db.Column(db.String(50))
     description = db.Column(db.String(500))
@@ -53,15 +53,15 @@ class Host(db.Model):
 
 class Service(db.Model):
     __tablename__ = "services"
-    id = db.Column(db.String(32), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     port = db.Column(db.Integer)
-    tunnel = db.Column(db.String(32))
-    protocol = db.Column(db.String(32))
+    tunnel = db.Column(db.String(50))
+    protocol = db.Column(db.String(50))
     state = db.Column(db.String(10))
     service = db.Column(db.String(50))
     name = db.Column(db.String(50))
     description = db.Column(db.String(500))
-    host_id = db.Column(db.String(32), db.ForeignKey("hosts.id"))
+    host_id = db.Column(db.String(36), db.ForeignKey("hosts.id"))
 
     def __repr__(self):
         return "<Service {} {} {} {} {}>".format(self.port, self.tunnel, self.protocol, self.service, self.name)
@@ -104,7 +104,7 @@ class Service(db.Model):
 
 class Domain(db.Model):
     __tablename__ = "domains"
-    id = db.Column(db.String(32), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(50))
     description = db.Column(db.String(500))
     host_domain = db.relationship("HostDomain", backref="domain")
@@ -152,9 +152,9 @@ class Domain(db.Model):
 
 class HostDomain(db.Model):
     __tablename__ = "host_domain"
-    id = db.Column(db.String(32), primary_key=True)
-    host_id = db.Column(db.String(32), db.ForeignKey("hosts.id"))
-    domain_id = db.Column(db.String(32), db.ForeignKey("domains.id"))
+    id = db.Column(db.String(36), primary_key=True)
+    host_id = db.Column(db.String(36), db.ForeignKey("hosts.id"))
+    domain_id = db.Column(db.String(36), db.ForeignKey("domains.id"))
 
     def __repr__(self):
         return "<HostDomain {}<->{}>".format(self.host, self.domain)

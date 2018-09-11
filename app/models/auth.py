@@ -8,7 +8,7 @@ DEPARTMENT = ["信息安全"]
 
 class Role(db.Model):
     __tablename__ = "roles"
-    id = db.Column(db.String(32), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(64), unique=True)
     department = db.Column(db.String(128), unique=False)
     user_role = db.relationship("UserRole", backref="role")
@@ -54,11 +54,12 @@ class Role(db.Model):
 
 class User(db.Model):
     __tablename__ = "users"
-    id = db.Column(db.String(32), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(64), unique=True)
     password_hash = db.Column(db.String(128))
     department = db.Column(db.String(128), unique=False)
     user_role = db.relationship("UserRole", backref="user")
+    fail_count = db.Column(db.Integer, default=0, nullable=False)
 
     def __repr__(self):
         return "<User {}>".format(self.name)
@@ -93,7 +94,18 @@ class User(db.Model):
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        if self.fail_count >= 5:
+            return False
+        if check_password_hash(self.password_hash, password):
+            self.fail_count = 0
+            db.session.add(self)
+            db.session.commit()
+            return True
+        else:
+            self.fail_count += 1
+            db.session.add(self)
+            db.session.commit()
+        return False
 
     @property
     def role_list(self):
@@ -116,9 +128,9 @@ class User(db.Model):
 
 class UserRole(db.Model):
     __tablename__ = 'user_role'
-    id = db.Column(db.String(32), primary_key=True)
-    role_id = db.Column(db.String(32), db.ForeignKey("roles.id"))
-    user_id = db.Column(db.String(32), db.ForeignKey("users.id"))
+    id = db.Column(db.String(36), primary_key=True)
+    role_id = db.Column(db.String(36), db.ForeignKey("roles.id"))
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"))
 
     def __repr__(self):
         return "<UserRole {}<->{}>".format(self.user, self.role)
@@ -130,7 +142,7 @@ class UserRole(db.Model):
 
 class Permission(db.Model):
     __tablename__ = 'permissions'
-    id = db.Column(db.String(32), primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(64), unique=True)
     endpoint = db.Column(db.String(128), unique=True)
     role_permission = db.relationship("RolePermission", backref="permission")
@@ -169,9 +181,9 @@ class Permission(db.Model):
 
 class RolePermission(db.Model):
     __tablename__ = "role_permission"
-    id = db.Column(db.String(32), primary_key=True)
-    role_id = db.Column(db.String(32), db.ForeignKey("roles.id"))
-    permission_id = db.Column(db.String(32), db.ForeignKey("permissions.id"))
+    id = db.Column(db.String(36), primary_key=True)
+    role_id = db.Column(db.String(36), db.ForeignKey("roles.id"))
+    permission_id = db.Column(db.String(36), db.ForeignKey("permissions.id"))
 
     def __repr__(self):
         return "RolePermission {}<->{}".format(self.role, self.permission)

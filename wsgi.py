@@ -1,6 +1,8 @@
 import os
 import json
 import flask
+import click
+from flask_migrate import Migrate, upgrade
 from app import create_app, db, es
 from app.models.auth import User, Role, UserRole, Permission, RolePermission
 from app.models.probe import Host, Domain, Service, HostDomain
@@ -10,6 +12,7 @@ if os.path.exists(dotenv_path):
     flask.cli.load_dotenv(dotenv_path)
 
 app = create_app(os.environ.get("FLASK_CONFIG", default="err"))
+migrate = Migrate(app, db)
 
 
 @app.shell_context_processor
@@ -21,6 +24,18 @@ def make_shell_context():
 
 
 @app.cli.command()
+@click.option("--length", default=25,
+              help="Number of functions to include in the profiler report.")
+@click.option("--profile-dir", default=None,
+              help="Directory where profiler data files are saved.")
+def profile(length, profile_dir):
+    """Start the application under the code profiler."""
+    from werkzeug.contrib.profiler import ProfilerMiddleware
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length], profile_dir=profile_dir)
+    app.run()
+
+
+@app.cli.command()
 def fake():
     from app.fake import generate_fake_auth
     generate_fake_auth(url_map=app.url_map)
@@ -28,8 +43,9 @@ def fake():
 
 @app.cli.command()
 def deploy():
-    db.drop_all()
-    db.create_all()
+    upgrade()
+    # db.drop_all()
+    # db.create_all()
     # add user
     user_info_list = [
         {"name": "aaa", "department": "信息安全", "password": "123456"},
@@ -102,7 +118,6 @@ def deploy():
 
     # update domain
     for domain in Domain.query.all():
-        print(domain.name)
         import dns.resolver
         try:
             answer = dns.resolver.query(domain.name, 'A')

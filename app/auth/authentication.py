@@ -10,7 +10,8 @@ def login():
     if login_form.validate_on_submit():
         user = User.query.filter(User.name == login_form.username.data).first()
         if not user or not user.verify_password(login_form.password.data):
-            return render_template("auth/login.html", form=login_form, flash=flash("用户名或密码错误"))
+            return render_template("auth/login.html", form=login_form,
+                                   flash=flash("用户名或密码错误，连续5次输入错误账号会被锁定，请联系管理员"))
         for item in list(session.keys()):
             session.pop(item)
         session["id"] = user.id
