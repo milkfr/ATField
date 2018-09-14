@@ -78,7 +78,7 @@ def domain_list():
                                        Domain.description.ilike("%{}%".format(key)),)).paginate(
         page=page, per_page=per_apge, error_out=False
     )
-    return render_template("probe/domain_list.html", pagination=pagination, url="probe.host_list")
+    return render_template("probe/domain_list.html", pagination=pagination, url="probe.domain_list")
 
 
 @probe.route("/domain/update", methods=["GET", "POST"])

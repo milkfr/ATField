@@ -1,17 +1,16 @@
 import os
 import json
-import flask
 import click
 from flask_migrate import Migrate, upgrade
 from app import create_app, db, es
 from app.models.auth import User, Role, UserRole, Permission, RolePermission
 from app.models.probe import Host, Domain, Service, HostDomain
+from dotenv import load_dotenv
 
-dotenv_path = os.path.join(os.path.dirname(__file__), ".flaskenv")
-if os.path.exists(dotenv_path):
-    flask.cli.load_dotenv(dotenv_path)
 
-app = create_app(os.environ.get("FLASK_CONFIG", default="err"))
+load_dotenv(dotenv_path=".flaskenv")
+
+app = create_app(os.environ.get("FLASK_CONFIG", default="default"))
 migrate = Migrate(app, db)
 
 

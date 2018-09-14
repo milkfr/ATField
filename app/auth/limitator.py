@@ -7,7 +7,7 @@ from ..models.auth import User, Permission
 def permission_required():
 
     # 白名单通过
-    whitelist = ["auth.login", "auth.logout", "main.index", "bootstrap.static", "static"]
+    whitelist = ["main.test", "auth.login", "auth.logout", "main.index", "bootstrap.static", "static"]
     if request.endpoint in whitelist:
         return
 
