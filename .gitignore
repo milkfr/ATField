@@ -6,3 +6,5 @@
 */.DS_Store
 ip.txt
 domain.txt
+certs/*
+venv/*
