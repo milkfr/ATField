@@ -17,7 +17,7 @@ class Config:
     MAIL_USERNAME = os.environ.get("FLASK_MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("FLASK_MAIL_PASSWORD")
     MAIL_SUBJECT_PREFIX = "[milkfr]"
-    MAIL_SENDER = "milkfr <milkfr@milk.com>"
+    MAIL_SENDER = os.environ.get("FLASK_MAIL_USERNAME")
 
     @staticmethod
     def init_app(app):

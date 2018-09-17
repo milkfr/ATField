@@ -39,5 +39,8 @@ def create_app(config_name):
     from .probe import probe as probe_blueprint
     app.register_blueprint(probe_blueprint, url_prefix="/probe")
 
+    from .tasks import tasks as tasks_blueprint
+    app.register_blueprint(tasks_blueprint, url_prefix="/tasks")
+
     return app
 
