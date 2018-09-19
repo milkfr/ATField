@@ -1,8 +1,7 @@
-from flask import abort, render_template, jsonify, url_for, current_app, send_from_directory
+from flask import render_template, current_app, send_from_directory
 
 from . import main
-from ..models.auth import User
-from ..email import send_email
+from app.async.email import send_email
 
 
 @main.route('/', methods=["GET"])

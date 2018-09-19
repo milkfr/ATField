@@ -1,6 +1,6 @@
 from flask import current_app, render_template
 from flask_mail import Message
-from . import mail, celery
+from app import mail, celery
 
 
 @celery.task

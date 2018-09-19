@@ -5,6 +5,7 @@ from flask_migrate import Migrate, upgrade
 from app import create_app, db, es
 from app.models.auth import User, Role, UserRole, Permission, RolePermission
 from app.models.probe import Host, Domain, Service, HostDomain
+from app.models.tasks import Task
 from dotenv import load_dotenv
 
 
@@ -16,7 +17,7 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, db=db, es=es,
+    return dict(app=app, db=db, es=es, Task=Task,
                 User=User, Role=Role, UserRole=UserRole,
                 Permission=Permission, RolePermission=RolePermission,
                 Host=Host, Domain=Domain, Service=Service, HostDomain=HostDomain)
@@ -38,6 +39,18 @@ def profile(length, profile_dir):
 def fake():
     from app.fake import generate_fake_auth
     generate_fake_auth(url_map=app.url_map)
+
+
+@app.cli.command()
+def update():
+    upgrade()
+    permission_info_list = [
+        {"name": "单次任务列表查看", "endpoint": "tasks.once_list"},
+        {"name": "定时任务列表查看", "endpoint": "tasks.timed_list"},
+        {"name": "新增任务", "endpoint": "tasks.new"},
+        {"name": "任务详情查看", "endpoint": "tasks.info"},
+    ]
+    Permission.insert_items(permission_info_list)
 
 
 @app.cli.command()

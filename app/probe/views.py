@@ -9,12 +9,12 @@ from ..models.probe import Host, Domain, Service
 @probe.route("/host/list")
 def host_list():
     page = request.args.get("page", 1, type=int)
-    per_apge = request.args.get("per_page", 10, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
     pagination = Host.query.filter(or_(Host.name.ilike("%{}%".format(key)),
                                        Host.description.ilike("%{}%".format(key)),
                                        Host.ip.ilike("%{}%".format(key)))).paginate(
-        page=page, per_page=per_apge, error_out=False
+        page=page, per_page=per_page, error_out=False
     )
     return render_template("probe/host_list.html", pagination=pagination, url="probe.host_list")
 
@@ -37,7 +37,7 @@ def host_update():
 @probe.route("/service/list")
 def service_list():
     page = request.args.get("page", 1, type=int)
-    per_apge = request.args.get("per_page", 10, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
     pagination = Service.query.filter(or_(Service.name.ilike("%{}%".format(key)),
                                           Service.description.ilike("%{}%".format(key)),
@@ -45,7 +45,7 @@ def service_list():
                                           Service.tunnel.ilike("%{}%".format(key)),
                                           Service.protocol.ilike("%{}%".format(key)),
                                           Service.service.ilike("%{}%".format(key)))).paginate(
-        page=page, per_page=per_apge, error_out=False
+        page=page, per_page=per_page, error_out=False
     )
     return render_template("probe/service_list.html", pagination=pagination, url="probe.service_list")
 
@@ -71,11 +71,11 @@ def service_update():
 @probe.route("/domain/list")
 def domain_list():
     page = request.args.get("page", 1, type=int)
-    per_apge = request.args.get("per_page", 10, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
     pagination = Domain.query.filter(or_(Domain.name.ilike("%{}%".format(key)),
                                        Domain.description.ilike("%{}%".format(key)),)).paginate(
-        page=page, per_page=per_apge, error_out=False
+        page=page, per_page=per_page, error_out=False
     )
     return render_template("probe/domain_list.html", pagination=pagination, url="probe.domain_list")
 
