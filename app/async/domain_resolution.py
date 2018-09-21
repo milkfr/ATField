@@ -1,22 +1,10 @@
-#!/usr/bin/env python3
-import dns.resolver
+from app import celery
 from datetime import datetime
-import argparse
-import logging
-import time
-import json
+import dns.resolver
 
 
-logging.basicConfig(level=logging.DEBUG,
-                    format="[%(asctime)s %(filename)s(line:%(lineno)d)] %(levelname)s %(message)s",
-                    datefmt="%Y-%m-%d %H:%M:%S",
-                    filename="domain_resolution.log",
-                    filemode='a')
-
-start_time = time.time()
-
-
-def do_scan(targets):
+@celery.task(bind=True)
+def do_async_scan(self, targets):
     result = {
         "start_time": datetime.utcnow(),
         "end_time": datetime.utcnow(),
@@ -26,40 +14,26 @@ def do_scan(targets):
             "details": []
         }
     }
+    count = 0
+    self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
     for domain in targets.split():
+        item = {}
+
         try:
             answer = dns.resolver.query(domain, 'A')
             for i in answer.response.answer:
-                result["result"]["details"].append({"domain": domain, "ip": [j.address for j in i.items], "error": ""})
+                import time
+                time.sleep(5)
+                item["domain"] = domain
+                item["ip"] = [j.address for j in i.items]
+                item["error"] = ""
         except Exception as e:
-            result["result"]["details"].append({"domain": domain, "ip": None, "error": e.__repr__()})
+            item["error"] = e.__repr__()
             result["result"]["failed"] += 1
+
+        result["result"]["details"].append(item)
+        count += 1
+        self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
+
     result["end_time"] = datetime.utcnow()
     return result
-
-
-def handler_result(result):
-    with open("domain_resolution_{}.json".format(time.strftime("%Y%m%d%H%M", time.localtime(int(start_time)))), 'a') as f:
-        f.write(json.dumps(result))
-
-
-def command_parse():
-    parser = argparse.ArgumentParser(description="A probe for finding ports and applications")
-
-    parser.add_argument("-f", "--file", dest="target_file", nargs='?', required=True,
-                        help="Specify targets from file")
-    return parser.parse_args()
-
-
-def main():
-    args = command_parse()
-    domain_list = []
-    with open(args.target_file, "r") as f:
-        for line in f.readlines():
-            domain_list.append(line.strip())
-    result = do_scan(' '.join(domain_list))
-    handler_result(result)
-
-
-if __name__ == "__main__":
-    main()

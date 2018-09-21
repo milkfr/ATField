@@ -7,7 +7,6 @@
 <th>开始时间</th>
 <th>结束时间</th>
 <th>状态</th>
-<th>命令</th>
 <th>描述</th>
 <th>目标</th>
 <th>操作</th>
@@ -22,7 +21,6 @@
     <th>{{ task.start_time }}</th>
     <th>{{ task.end_time }}</th>
     <th>{{ task.status }}</th>
-    <th>{{ task.command }}</th>
     <th>{{ task.description }}</th>
     <th>{{ task.targets }}</th>
     <th>{% for task in task.host_list %}{{ host.__repr__() }}{% endfor %}</th>

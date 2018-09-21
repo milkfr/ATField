@@ -1,8 +1,8 @@
-"""update tasks
+"""init task
 
-Revision ID: 6e52a1f29a86
+Revision ID: c76cf6b601e8
 Revises: 52baede70380
-Create Date: 2018-09-18 18:39:01.219434
+Create Date: 2018-09-20 15:39:46.885465
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6e52a1f29a86'
+revision = 'c76cf6b601e8'
 down_revision = '52baede70380'
 branch_labels = None
 depends_on = None
@@ -25,11 +25,9 @@ def upgrade():
     sa.Column('status', sa.String(length=50), nullable=True),
     sa.Column('func_type', sa.String(length=50), nullable=True),
     sa.Column('time_type', sa.String(length=50), nullable=True),
-    sa.Column('command', sa.String(length=500), nullable=True),
     sa.Column('description', sa.String(length=500), nullable=True),
     sa.Column('targets', sa.Text(), nullable=True),
     sa.Column('result', sa.Text(), nullable=True),
-    sa.Column('celery_id', sa.String(length=50), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

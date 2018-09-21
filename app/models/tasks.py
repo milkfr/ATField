@@ -11,11 +11,9 @@ class Task(db.Model):
     status = db.Column(db.String(50))
     func_type = db.Column(db.String(50))
     time_type = db.Column(db.String(50))
-    command = db.Column(db.String(500))
     description = db.Column(db.String(500))
     targets = db.Column(db.Text)
     result = db.Column(db.Text)
-    celery_id = db.Column(db.String(50))
 
     def __repr__(self):
         return "<Task {} {}>".format(self.func_type, self.time_type)
@@ -24,29 +22,38 @@ class Task(db.Model):
         super(Task, self).__init__(**kwargs)
         self.id = str(uuid.uuid1())
 
+    FUNC_TYPE_DOMAIN_RESOLUTION = "domain resolution"
+    FUNC_TYPE_SERVICE_PROBE_BY_NMAP = "service probe by nmap"
+    FUNC_TYPE_SERVICE_PROBE_BY_MASSCAN = "service probe by masscan"
+    FUNC_TYPES = [FUNC_TYPE_DOMAIN_RESOLUTION,
+                  FUNC_TYPE_SERVICE_PROBE_BY_MASSCAN,
+                  FUNC_TYPE_SERVICE_PROBE_BY_NMAP]
+
+    STATUS_PENDING = "PENDING"
+    STATUS_RUNNING = "RUNNING"
+    STATUS_END = "END"
+
     @staticmethod
     def insert_tasks(task_info_list):
-        # task_info_list = [{"func_type": None, "time_type": None, "command": None,
+        # task_info_list = [{"func_type": None, "time_type": None,
         # "description": None, "targets": list},...]
         for task_info in task_info_list:
-            task = Task(tyep=task_info["func_type"], time_type=task_info["time_type"], command=task_info["command"],
+            task = Task(tyep=task_info["func_type"], time_type=task_info["time_type"],
                         description=task_info["description"], targets=task_info["targets"])
-            task.status = "pending"
+            task.status = Task.STATUS_PENDING
             task.start_time = datetime.utcnow()
             db.session.add(task)
         db.session.commit()
 
     @staticmethod
-    def insert_task_and_return(func_type, time_type, command, description, targets, celery_id=celery_id):
-        task = Task(func_type=func_type, time_type=time_type, command=command,
-                    targets=targets, description=description, celery_id=celery_id)
-        task.status = "pending"
+    def insert_task_and_return(func_type, time_type, description, targets):
+        task = Task(func_type=func_type, time_type=time_type,
+                    targets=targets, description=description)
+        task.status = Task.STATUS_PENDING
         task.start_time = datetime.utcnow()
         db.session.add(task)
         db.session.commit()
         return task
-
-    FUNC_TYPES = ["domain resolution", "service probe", "host scan", "web scan", "cgi scan"]
 
     def update_process(self, status):
         self.status = status
@@ -54,7 +61,7 @@ class Task(db.Model):
         db.session.commit()
 
     def update_result(self, result, start_time, end_time):
-        self.status = "end"
+        self.status = Task.STATUS_END
         self.result = result
         self.start_time = start_time
         self.end_time = end_time

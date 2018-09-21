@@ -44,13 +44,13 @@ def fake():
 @app.cli.command()
 def update():
     upgrade()
-    permission_info_list = [
-        {"name": "单次任务列表查看", "endpoint": "tasks.once_list"},
-        {"name": "定时任务列表查看", "endpoint": "tasks.timed_list"},
-        {"name": "新增任务", "endpoint": "tasks.new"},
-        {"name": "任务详情查看", "endpoint": "tasks.info"},
-    ]
-    Permission.insert_items(permission_info_list)
+    # permission_info_list = [
+    #     {"name": "单次任务列表查看", "endpoint": "tasks.once_list"},
+    #     {"name": "定时任务列表查看", "endpoint": "tasks.timed_list"},
+    #     {"name": "新增任务", "endpoint": "tasks.new"},
+    #     {"name": "任务详情查看", "endpoint": "tasks.info"},
+    # ]
+    # Permission.insert_items(permission_info_list)
 
 
 @app.cli.command()
