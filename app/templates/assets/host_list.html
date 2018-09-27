@@ -21,7 +21,7 @@
     <th>{{ host.status }}</th>
     <th>{% for domain in host.domain_list %}{{ domain.__repr__() }}{% endfor %}</th>
     <th>{% for service in host.services %}{{ service.__repr__() }}{% endfor %}</th>
-    <th><a type="btn-link" href="{{ url_for('probe.host_update', id=host.id) }}">编辑主机</a></th>
+    <th><a type="btn-link" href="{{ url_for('assets.host_update', id=host.id) }}">编辑主机</a></th>
 </tr>
 {% endfor %}
 {% endblock tbody %}

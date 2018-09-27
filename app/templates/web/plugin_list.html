@@ -1,0 +1,25 @@
+{% extends 'extends/_table.html' %}
+
+{% block theader %}
+<th>UUID</th>
+<th>命名</th>
+<th>描述</th>
+<th>内容</th>
+<th>使用应用</th>
+<th>操作</th>
+{% endblock theader %}
+
+{% block tbody %}
+{% for plugin in pagination.items %}
+<tr class="table-active">
+    <th>{{ plugin.id }}</th>
+    <th>{{ plugin.name }}</th>
+    <th>{{ plugin.description }}</th>
+    <th>{{ plugin.content }}</th>
+    <th>{% for application in plugin.application_list %}{{ application.__repr__() }}{% endfor %}</th>
+    <th>
+        <a type="btn-link" href="{{ url_for('web.plugin_update', id=plugin.id) }}">编辑插件</a>
+    </th>
+</tr>
+{% endfor %}
+{% endblock tbody %}

@@ -22,8 +22,6 @@ def do_async_scan(self, targets):
         try:
             answer = dns.resolver.query(domain, 'A')
             for i in answer.response.answer:
-                import time
-                time.sleep(5)
                 item["domain"] = domain
                 item["ip"] = [j.address for j in i.items]
                 item["error"] = ""

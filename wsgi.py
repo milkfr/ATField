@@ -4,8 +4,9 @@ import click
 from flask_migrate import Migrate, upgrade
 from app import create_app, db, es
 from app.models.auth import User, Role, UserRole, Permission, RolePermission
-from app.models.probe import Host, Domain, Service, HostDomain
+from app.models.assets import Host, Domain, Service, HostDomain
 from app.models.tasks import Task
+from app.models.web import Application, Package, Plugin, ApplicationPlugin
 from dotenv import load_dotenv
 
 
@@ -20,6 +21,7 @@ def make_shell_context():
     return dict(app=app, db=db, es=es, Task=Task,
                 User=User, Role=Role, UserRole=UserRole,
                 Permission=Permission, RolePermission=RolePermission,
+                Application=Application, Package=Package, Plugin=Plugin, ApplicationPlugin=ApplicationPlugin,
                 Host=Host, Domain=Domain, Service=Service, HostDomain=HostDomain)
 
 
@@ -43,7 +45,7 @@ def fake():
 
 @app.cli.command()
 def update():
-    upgrade()
+    # upgrade()
     # permission_info_list = [
     #     {"name": "单次任务列表查看", "endpoint": "tasks.once_list"},
     #     {"name": "定时任务列表查看", "endpoint": "tasks.timed_list"},
@@ -51,6 +53,16 @@ def update():
     #     {"name": "任务详情查看", "endpoint": "tasks.info"},
     # ]
     # Permission.insert_items(permission_info_list)
+
+    permission_info_list = [
+        {"name": "Web应用列表查看", "endpoint": "web.application_list"},
+        {"name": "Web应用信息修改", "endpoint": "web.application_update"},
+        {"name": "Web应用报文列表查看", "endpoint": "web.package_list"},
+        {"name": "Web应用报文注修改", "endpoint": "web.package_update"},
+        {"name": "Web扫描插件信息查看", "endpoint": "web.plugin_list"},
+        {"name": "Web扫描插件信息修改", "endpoint": "web.plugin_update"},
+    ]
+    Permission.insert_items(permission_info_list)
 
 
 @app.cli.command()
@@ -79,12 +91,12 @@ def deploy():
         {"name": "角色列表查看", "endpoint": "auth.role_list"},
         {"name": "角色权限信息修改", "endpoint": "auth.role_update"},
         {"name": "权限列表查看", "endpoint": "auth.permission_list"},
-        {"name": "主机资产查看", "endpoint": "probe.host_list"},
-        {"name": "主机资产信息修改", "endpoint": "probe.host_update"},
-        {"name": "服务资产设定", "endpoint": "probe.service_list"},
-        {"name": "服务资产信息修改", "endpoint": "probe.service_update"},
-        {"name": "域名资产查看", "endpoint": "probe.domain_list"},
-        {"name": "域名资产信息修改", "endpoint": "probe.domain_update"},
+        {"name": "主机资产查看", "endpoint": "assets.host_list"},
+        {"name": "主机资产信息修改", "endpoint": "assets.host_update"},
+        {"name": "服务资产设定", "endpoint": "assets.service_list"},
+        {"name": "服务资产信息修改", "endpoint": "assets.service_update"},
+        {"name": "域名资产查看", "endpoint": "assets.domain_list"},
+        {"name": "域名资产信息修改", "endpoint": "assets.domain_update"},
         {"name": "下载文件", "endpoint": "main.download"},
     ]
     Permission.insert_items(permission_info_list)
@@ -110,7 +122,7 @@ def deploy():
         for line in f.readlines():
             line = json.loads(line)
             host = Host.query.filter(Host.ip == line["address"]).first()
-            host.update_probe_info(line["status"])
+            host.update_asset_info(line["status"])
             service_info_list = []
             for service in line["services"]:
                 service_info_list.append(
@@ -134,6 +146,6 @@ def deploy():
         try:
             answer = dns.resolver.query(domain.name, 'A')
             for i in answer.response.answer:
-                domain.update_probe_info([j.address for j in i.items])
+                domain.update_asset_info([j.address for j in i.items])
         except Exception as e:
             print(e)

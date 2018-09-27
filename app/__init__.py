@@ -36,11 +36,13 @@ def create_app(config_name):
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
-    from .probe import probe as probe_blueprint
-    app.register_blueprint(probe_blueprint, url_prefix="/probe")
+    from .assets import assets as assets_blueprint
+    app.register_blueprint(assets_blueprint, url_prefix="/assets")
 
     from .tasks import tasks as tasks_blueprint
     app.register_blueprint(tasks_blueprint, url_prefix="/tasks")
 
-    return app
+    from .web import web as web_blueprint
+    app.register_blueprint(web_blueprint, url_prefix="/web")
 
+    return app

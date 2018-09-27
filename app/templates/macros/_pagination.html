@@ -1,4 +1,4 @@
-{% macro pagination_widget(pagination, endpoint) %}
+{% macro pagination_widget(pagination, endpoint, kwargs) %}
 <ul class="pagination">
     <li{% if not pagination.has_prev %} class="page-item disable"{% endif %}>
         <a class="page-link" href="{% if pagination.has_prev %}{{ url_for(endpoint, page = pagination.page - 1, **kwargs) }}{% else %}#{% endif %}">

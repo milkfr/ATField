@@ -15,7 +15,7 @@
     <th>{{ domain.name }}</th>
     <th>{{ domain.description }}</th>
     <th>{% for host in domain.host_list %}{{ host.__repr__() }}{% endfor %}</th>
-    <th><a type="btn-link" href="{{ url_for('probe.domain_update', id=domain.id) }}">编辑域名</a></th>
+    <th><a type="btn-link" href="{{ url_for('assets.domain_update', id=domain.id) }}">编辑域名</a></th>
 </tr>
 {% endfor %}
 {% endblock tbody %}

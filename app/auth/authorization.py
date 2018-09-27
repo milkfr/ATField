@@ -14,7 +14,8 @@ def user_list():
     pagination = User.query.filter(User.name.ilike("%{}%".format(key))).paginate(
         page=page, per_page=per_page, error_out=False
     )
-    return render_template("auth/user_list.html", pagination=pagination, url='auth.user_list')
+    return render_template("auth/user_list.html", pagination=pagination, url="auth.user_list",
+                           kwargs={"per_page": per_page, "key": key})
 
 
 @auth.route("/user/update", methods=["GET", "POST"])
@@ -47,7 +48,8 @@ def role_list():
     pagination = Role.query.filter(Role.name.ilike("%{}%".format(key))).paginate(
         page=page, per_page=per_page, error_out=False
     )
-    return render_template("auth/role_list.html", pagination=pagination, url='auth.role_list')
+    return render_template("auth/role_list.html", pagination=pagination, url="auth.role_list",
+                           kwargs={"per_page": per_page, "key": key})
 
 
 @auth.route("/role/update", methods=["GET", "POST"])
@@ -77,4 +79,5 @@ def permission_list():
     pagination = Permission.query.filter(Permission.name.ilike("%{}%".format(key))).paginate(
         page=page, per_page=per_page, error_out=False
     )
-    return render_template("auth/permission_list.html", pagination=pagination, url="auth.permission_list")
+    return render_template("auth/permission_list.html", pagination=pagination, url="auth.permission_list",
+                           kwargs={"per_page": per_page, "key": key})

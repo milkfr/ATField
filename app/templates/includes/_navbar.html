@@ -17,9 +17,16 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes">资产探测 <span class="caret"></span></a>
           <div class="dropdown-menu" aria-labelledby="themes">
-            <a class="dropdown-item" href="{{ url_for('probe.host_list') }}">主机资产</a>
-            <a class="dropdown-item" href="{{ url_for('probe.service_list') }}">服务资产</a>
-            <a class="dropdown-item" href="{{ url_for('probe.domain_list') }}">域名资产</a>
+            <a class="dropdown-item" href="{{ url_for('assets.host_list') }}">主机资产</a>
+            <a class="dropdown-item" href="{{ url_for('assets.service_list') }}">服务资产</a>
+            <a class="dropdown-item" href="{{ url_for('assets.domain_list') }}">域名资产</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Web应用 <span class="caret"></span></a>
+          <div class="dropdown-menu" aria-labelledby="themes">
+            <a class="dropdown-item" href="{{ url_for('web.application_list') }}">Web应用列表</a>
+            <a class="dropdown-item" href="{{ url_for('web.plugin_list') }}">扫描插件列表</a>
           </div>
         </li>
         <li class="nav-item dropdown">
@@ -27,7 +34,7 @@
           <div class="dropdown-menu" aria-labelledby="themes">
             <a class="dropdown-item" href="{{ url_for('tasks.timed_list') }}">定时任务列表</a>
             <a class="dropdown-item" href="{{ url_for('tasks.once_list') }}">单次任务列表</a>
-            <a class="dropdown-item" href="{{ url_for('tasks.new') }}">新建任务</a>
+            <a class="dropdown-item" href="{{ url_for('tasks.new') }}">新建单次任务</a>
           </div>
         </li>
       </ul>

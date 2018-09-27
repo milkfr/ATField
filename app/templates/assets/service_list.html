@@ -25,7 +25,9 @@
     <th>{{ service.service }}</th>
     <th>{{ service.name }}</th>
     <th>{{ service.description }}</th>
-    <th><a type="btn-link" href="{{ url_for('probe.service_update', id=service.id) }}">编辑服务</a></th>
+    <th>
+        <a type="btn-link" href="{{ url_for('assets.service_update', id=service.id) }}">编辑服务</a>
+    </th>
 </tr>
 {% endfor %}
 {% endblock tbody %}

@@ -31,7 +31,7 @@ class Host(db.Model):
             db.session.add(host)
         db.session.commit()
 
-    def update_probe_info(self, status):
+    def update_asset_info(self, status):
         self.status = status
         db.session.add(self)
         db.session.commit()
@@ -64,7 +64,8 @@ class Service(db.Model):
     host_id = db.Column(db.String(36), db.ForeignKey("hosts.id"))
 
     def __repr__(self):
-        return "<Service {} {} {} {} {}>".format(self.port, self.tunnel, self.protocol, self.service, self.name)
+        return "<Service {} {} {} {} {} {}>".format(self.host.ip, self.port,
+                                                    self.tunnel, self.protocol, self.service, self.name)
 
     def __init__(self, **kwargs):
         super(Service, self).__init__(**kwargs)
@@ -89,7 +90,7 @@ class Service(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_probe_info(self, tunnel, protocol, state, service):
+    def update_asset_info(self, tunnel, protocol, state, service):
         self.tunnel = tunnel
         self.tunnel = protocol
         self.state = state
@@ -128,7 +129,7 @@ class Domain(db.Model):
             db.session.add(domain)
             db.session.commit()
 
-    def update_probe_info(self, ips):
+    def update_asset_info(self, ips):
         # ips = ["0.0.0.1", "1.1.1.1"]
         for hd in HostDomain.query.filter(HostDomain.domain == self).all():
             db.session.delete(hd)
@@ -145,7 +146,8 @@ class Domain(db.Model):
         db.session.commit()
 
     def delete_item(self):
-        HostDomain.delete_relationship_by_domain(self)
+        for hd in HostDomain.query.filter(HostDomain.domain == self).all():
+            db.session.delete(hd)
         db.session.delete(self)
         db.session.commit()
 

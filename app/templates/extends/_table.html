@@ -25,6 +25,6 @@
 </table>
 <div class="pagination">
     {% import 'macros/_pagination.html' as macros %}
-    {{ macros.pagination_widget(pagination, url) }}
+    {{ macros.pagination_widget(pagination, url, kwargs) }}
 </div>
 {% endblock center %}

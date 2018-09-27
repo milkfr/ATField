@@ -6,7 +6,7 @@ import os
 
 
 @celery.task(bind=True)
-def do_async_scan(self, targets):
+def do_async_scan(self, targets, options):
     result = {
         "start_time": datetime.utcnow(),
         "end_time": datetime.utcnow(),
@@ -20,8 +20,8 @@ def do_async_scan(self, targets):
     self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
 
     for ip in targets.split():
-        temp_file = "temp.log"
-        scan_cmd = "nmap -n -Pn -sS -sV --host-timeout 300s -oX {} {}".format(temp_file, ip)
+        temp_file = "nmap.log"
+        scan_cmd = "nmap {} -oX {} {}".format(options, temp_file, ip)
         call(scan_cmd, shell=True)
 
         item = {}
@@ -32,17 +32,11 @@ def do_async_scan(self, targets):
             item["end_time"] = parser_result.endtime
             item["elasped"] = parser_result.elapsed
             item["commandline"] = parser_result.commandline
-            item["host"] = []
+            item["ip"] = ip
             item["error"] = ""
+            item["services"] = []
 
             for host in parser_result.hosts:
-                import time
-                time.sleep(5)
-                host_item = {
-                    "address": host.address,
-                    "vendor": host.vendor,
-                    "services": [],
-                }
                 for service in host.services:
                     service_item = {
                         "port": service.port,
@@ -52,8 +46,7 @@ def do_async_scan(self, targets):
                         "service": service.service,
                         "banner": service.banner,
                     }
-                    host_item["services"].append(service_item)
-                item["hosts"].append(host_item)
+                    item["services"].append(service_item)
             if os.path.exists(temp_file):
                 os.remove(temp_file)
         except Exception as e:

@@ -8,3 +8,6 @@ ip.txt
 domain.txt
 certs/*
 venv/*
+*.db
+*.log
+*.json

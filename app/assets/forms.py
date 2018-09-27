@@ -9,7 +9,7 @@ class HostUpdateForm(FlaskForm):
     service = SelectMultipleField("服务", coerce=str, render_kw={"disabled": "disabled"})
     domain = SelectMultipleField("域名", coerce=str, render_kw={"disabled": "disabled"})
     name = StringField("名称", validators=[DataRequired(), Length(1, 50)])
-    description = StringField("描述", validators=[DataRequired(), Length(0, 50)])
+    description = StringField("描述", validators=[DataRequired(), Length(0, 500)])
     submit = SubmitField("提交")
 
     def __init__(self, host):
@@ -25,7 +25,7 @@ class ServiceUpdateForm(FlaskForm):
     state = StringField("状态", render_kw={"disabled": "disabled"})
     host = StringField("主机", render_kw={"disabled": "disabled"})
     name = StringField("名称", validators=[DataRequired(), Length(1, 50)])
-    description = StringField("描述", validators=[DataRequired(), Length(0, 50)])
+    description = StringField("描述", validators=[DataRequired(), Length(0, 500)])
     submit = SubmitField("提交")
 
     def __init__(self):
@@ -35,7 +35,7 @@ class ServiceUpdateForm(FlaskForm):
 class DomainUpdateForm(FlaskForm):
     host = SelectMultipleField("主机", coerce=str, render_kw={"disabled": "disabled"})
     name = StringField("名称", validators=[DataRequired(), Length(1, 50)])
-    description = StringField("描述", validators=[DataRequired(), Length(0, 50)])
+    description = StringField("描述", validators=[DataRequired(), Length(0, 500)])
     submit = SubmitField("提交")
 
     def __init__(self, domain):
