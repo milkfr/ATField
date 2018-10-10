@@ -40,6 +40,21 @@ class Application(db.Model):
             db.session.add(application)
         db.session.commit()
 
+    @staticmethod
+    def insert_item(name, description, plugin_list):
+        application = Application(name=name, description=description)
+        db.session.add(application)
+        db.session.commit()
+        application.update_plugin_by_id(delete_plugin_list=[], add_plugin_list=plugin_list)
+        return application
+
+    def update_info(self, name, description, delete_plugin_list, add_plugin_list):
+        self.update_plugin_by_id(delete_plugin_list=delete_plugin_list, add_plugin_list=add_plugin_list)
+        self.name = name
+        self.description = description
+        db.session.add(self)
+        db.session.commit()
+
     def delete_item(self):
         for package in self.packages:
             db.session.delete(package)
@@ -70,7 +85,8 @@ class Package(db.Model):
         self.update_time = datetime.utcnow()
         self.id = str(uuid.uuid1())
 
-    def update_info(self, request, response, remarks):
+    def update_info(self, status, request, response, remarks):
+        self.status = status
         self.request = request
         self.response = response
         self.remarks = remarks
@@ -126,7 +142,26 @@ class Plugin(db.Model):
             db.session.add(plugin)
         db.session.commit()
 
-    def update_info(self, name, description, content):
+    @staticmethod
+    def insert_item(name, description, content, application_list):
+        plugin = Plugin(name=name, description=description, content=content)
+        db.session.add(plugin)
+        db.session.commit()
+        plugin.update_application_by_id(delete_application_list=[], add_application_list=application_list)
+
+    def update_application_by_id(self, delete_application_list, add_application_list):
+        for application_id in delete_application_list:
+            ap = ApplicationPlugin.query.filter(ApplicationPlugin.plugin == self,
+                                                ApplicationPlugin.application_id == application_id).first()
+            db.session.delete(ap)
+        for application_id in add_application_list:
+            ap = ApplicationPlugin(application_id=application_id, plugin=self)
+            db.session.add(ap)
+        db.session.commit()
+
+    def update_info(self, name, description, content, delete_application_list, add_application_list):
+        self.update_application_by_id(delete_application_list=delete_application_list,
+                                      add_application_list=add_application_list)
         self.name = name
         self.description = description
         self.content = content

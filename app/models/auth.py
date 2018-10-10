@@ -1,6 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import uuid
 from .. import db
+from flask import current_app
 
 
 DEPARTMENT = ["信息安全"]
@@ -106,6 +108,19 @@ class User(db.Model):
             db.session.add(self)
             db.session.commit()
         return False
+
+    def generate_api_auth_token(self, expiration):
+        s = Serializer(current_app.config["SECRET_KEY"], expires_in=expiration)
+        return s.dumps({"id": self.id})
+
+    @staticmethod
+    def verify_api_auth_token(token):
+        s = Serializer(current_app.config["SECRET_KEY"])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data["id"])
 
     @property
     def role_list(self):

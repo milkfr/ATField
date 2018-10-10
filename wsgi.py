@@ -54,13 +54,17 @@ def update():
     # ]
     # Permission.insert_items(permission_info_list)
 
+    # permission_info_list = [
+    #     {"name": "Web应用列表查看", "endpoint": "web.application_list"},
+    #     {"name": "Web应用信息修改", "endpoint": "web.application_update"},
+    #     {"name": "Web应用报文列表查看", "endpoint": "web.package_list"},
+    #     {"name": "Web应用报文注修改", "endpoint": "web.package_update"},
+    #     {"name": "Web扫描插件信息查看", "endpoint": "web.plugin_list"},
+    #     {"name": "Web扫描插件信息修改", "endpoint": "web.plugin_update"},
+    # ]
     permission_info_list = [
-        {"name": "Web应用列表查看", "endpoint": "web.application_list"},
-        {"name": "Web应用信息修改", "endpoint": "web.application_update"},
-        {"name": "Web应用报文列表查看", "endpoint": "web.package_list"},
-        {"name": "Web应用报文注修改", "endpoint": "web.package_update"},
-        {"name": "Web扫描插件信息查看", "endpoint": "web.plugin_list"},
-        {"name": "Web扫描插件信息修改", "endpoint": "web.plugin_update"},
+        {"name": "新增Web应用", "endpoint": "web.application_new"},
+        {"name": "新增Web扫描插件", "endpoint": "web.plugin_new"},
     ]
     Permission.insert_items(permission_info_list)
 

@@ -25,7 +25,9 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Web应用 <span class="caret"></span></a>
           <div class="dropdown-menu" aria-labelledby="themes">
+            <a class="dropdown-item" href="{{ url_for('web.application_new') }}">新增Web应用</a>
             <a class="dropdown-item" href="{{ url_for('web.application_list') }}">Web应用列表</a>
+            <a class="dropdown-item" href="{{ url_for('web.plugin_new') }}">新增扫描插件</a>
             <a class="dropdown-item" href="{{ url_for('web.plugin_list') }}">扫描插件列表</a>
           </div>
         </li>

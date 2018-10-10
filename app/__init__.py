@@ -45,4 +45,7 @@ def create_app(config_name):
     from .web import web as web_blueprint
     app.register_blueprint(web_blueprint, url_prefix="/web")
 
+    from .api_v_1_0 import api_v_1_0 as api_v_1_0_blueprint
+    app.register_blueprint(api_v_1_0_blueprint, url_prefix="/api/v1.0")
+
     return app

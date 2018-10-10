@@ -4,6 +4,16 @@ from app.models.web import Application, Package, Plugin
 from .forms import ApplicationUpdateForm, PackageUpdateForm, PluginUpdateForm
 
 
+@web.route("/application/new", methods=["GET", "POST"])
+def application_new():
+    form = ApplicationUpdateForm()
+    if form.validate_on_submit():
+        Application.insert_item(name=form.name.data, description=form.description.data,
+                                plugin_list=form.plugin.data)
+        return redirect(url_for("web.application_list"))
+    return render_template("web/application_update.html", form=form)
+
+
 @web.route("/application/list")
 def application_list():
     page = request.args.get("page", 1, type=int)
@@ -27,7 +37,8 @@ def application_update():
         old_plugin_id_list = [plugin.id for plugin in application.plugin_list]
         delete_plugin_list = list(set(old_plugin_id_list).difference(set(plugin_id_list)))
         add_plugin_list = list(set(plugin_id_list).difference(set(old_plugin_id_list)))
-        application.update_plugin_by_id(delete_plugin_list, add_plugin_list)
+        application.update_info(name=form.name.data, description=form.description.data,
+                                delete_plugin_list=delete_plugin_list, add_plugin_list=add_plugin_list)
         return redirect(url_for("web.application_list"))
     form.name.data = application.name
     form.description.data = application.description
@@ -56,7 +67,7 @@ def package_update():
     package = Package.query.filter(Package.id == package_id).first()
     form = PackageUpdateForm()
     if form.validate_on_submit():
-        package.update_info(request=form.request.data, response=form.request.data, remarks=form.remarks.data)
+        package.update_info(status=form.status.data, request=form.request.data, response=form.request.data, remarks=form.remarks.data)
         return redirect(url_for("web.package_list", application_id=package.application_id))
     form.application.data = package.application
     form.entrance.data = package.entrance
@@ -67,6 +78,15 @@ def package_update():
     form.response.data = package.response
     form.remarks.data = package.remarks
     return render_template("web/package_update.html", form=form)
+
+
+@web.route("/plugin/new", methods=["GET", "POST"])
+def plugin_new():
+    form = PluginUpdateForm()
+    if form.validate_on_submit():
+        Plugin.insert_item(form.name.data, form.description.data, form.content.data, form.application.data)
+        return redirect(url_for("web.plugin_list"))
+    return render_template("web/plugin_update.html", form=form)
 
 
 @web.route("/plugin/list")
@@ -88,10 +108,15 @@ def plugin_update():
     plugin = Plugin.query.filter(Plugin.id == plugin_id).first()
     form = PluginUpdateForm()
     if form.validate_on_submit():
-        plugin.update_info(name=form.name.data, description=form.description.data, content=form.description.data)
+        application_id_list = form.application.data
+        old_application_id_list = [application.id for application in plugin.application_list]
+        delete_application_list = list(set(old_application_id_list).difference(set(application_id_list)))
+        add_application_list = list(set(application_id_list).difference(set(old_application_id_list)))
+        plugin.update_info(name=form.name.data, description=form.description.data, content=form.content.data,
+                           delete_application_list=delete_application_list, add_application_list=add_application_list)
         return redirect(url_for("web.plugin_list"))
     form.name.data = plugin.name
     form.description.data = plugin.description
-    form.content.data = plugin.content.data
+    form.content.data = plugin.content
     form.application.data = [application.id for application in plugin.application_list]
     return render_template("web/plugin_update.html", form=form)

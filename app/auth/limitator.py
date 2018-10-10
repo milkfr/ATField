@@ -1,4 +1,4 @@
-from flask import session, request, redirect, url_for, abort
+from flask import session, request, redirect, url_for, jsonify
 from . import auth
 from ..models.auth import User, Permission
 
@@ -24,4 +24,6 @@ def permission_required():
     # 没有权限
     permission = Permission.query.filter(Permission.endpoint == request.endpoint).first()
     if not current_user.can(permission):
-        abort(404)
+        response = jsonify({"error": "Notfound"})
+        response.status_code = 404
+        return response
