@@ -45,28 +45,7 @@ def fake():
 
 @app.cli.command()
 def update():
-    # upgrade()
-    # permission_info_list = [
-    #     {"name": "单次任务列表查看", "endpoint": "tasks.once_list"},
-    #     {"name": "定时任务列表查看", "endpoint": "tasks.timed_list"},
-    #     {"name": "新增任务", "endpoint": "tasks.new"},
-    #     {"name": "任务详情查看", "endpoint": "tasks.info"},
-    # ]
-    # Permission.insert_items(permission_info_list)
-
-    # permission_info_list = [
-    #     {"name": "Web应用列表查看", "endpoint": "web.application_list"},
-    #     {"name": "Web应用信息修改", "endpoint": "web.application_update"},
-    #     {"name": "Web应用报文列表查看", "endpoint": "web.package_list"},
-    #     {"name": "Web应用报文注修改", "endpoint": "web.package_update"},
-    #     {"name": "Web扫描插件信息查看", "endpoint": "web.plugin_list"},
-    #     {"name": "Web扫描插件信息修改", "endpoint": "web.plugin_update"},
-    # ]
-    permission_info_list = [
-        {"name": "新增Web应用", "endpoint": "web.application_new"},
-        {"name": "新增Web扫描插件", "endpoint": "web.plugin_new"},
-    ]
-    Permission.insert_items(permission_info_list)
+    pass
 
 
 @app.cli.command()
@@ -101,7 +80,26 @@ def deploy():
         {"name": "服务资产信息修改", "endpoint": "assets.service_update"},
         {"name": "域名资产查看", "endpoint": "assets.domain_list"},
         {"name": "域名资产信息修改", "endpoint": "assets.domain_update"},
-        {"name": "下载文件", "endpoint": "main.download"},
+        {"name": "单次任务列表查看", "endpoint": "tasks.once_list"},
+        {"name": "定时任务列表查看", "endpoint": "tasks.timed_list"},
+        {"name": "新增任务", "endpoint": "tasks.new"},
+        {"name": "任务详情查看", "endpoint": "tasks.info"},
+        {"name": "Web应用列表查看", "endpoint": "web.application_list"},
+        {"name": "Web应用信息修改", "endpoint": "web.application_update"},
+        {"name": "Web应用报文列表查看", "endpoint": "web.package_list"},
+        {"name": "Web应用报文注修改", "endpoint": "web.package_update"},
+        {"name": "Web扫描插件信息查看", "endpoint": "web.plugin_list"},
+        {"name": "Web扫描插件信息修改", "endpoint": "web.plugin_update"},
+        {"name": "新增Web应用", "endpoint": "web.application_new"},
+        {"name": "新增Web扫描插件", "endpoint": "web.plugin_new"},
+        {"name": "api_token", "endpoint": "api_v_1_0.get_token"},
+        {"name": "api-host-list", "endpoint": "api_v_1_0.host_list"},
+        {"name": "api-service-list", "endpoint": "api_v_1_0.service_list"},
+        {"name": "api-domain-list", "endpoint": "api_v_1_0.domain_list"},
+        {"name": "api-task-list", "endpoint": "api_v_1_0.task_list"},
+        {"name": "api-application-list", "endpoint": "api_v_1_0.application_list"},
+        {"name": "api-package-list", "endpoint": "api_v_1_0.package_list"},
+        {"name": "api-plugin-list", "endpoint": "api_v_1_0.plugin_list"},
     ]
     Permission.insert_items(permission_info_list)
 

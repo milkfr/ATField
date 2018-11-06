@@ -62,6 +62,7 @@ def once_list():
                                        Task.time_type.ilike("%{}%".format(key)),
                                        Task.status.ilike("%{}%".format(key)),
                                        Task.targets.ilike("%{}%".format(key)),
+                                       Task.options.ilike("%{}%".format(key)),
                                        Task.description.ilike("%{}%".format(key)))).order_by(
         Task.start_time.desc()).paginate(page=page, per_page=per_page, error_out=False)
     return render_template("tasks/once_list.html", pagination=pagination, url="tasks.once_list",
