@@ -4,10 +4,45 @@ from ..models.assets import Host, Domain, Service
 from ..models.tasks import Task
 from ..models.web import Application, Plugin, Package
 from sqlalchemy import or_
+import json
+from app import csrf
+
+
+@csrf.exempt
+@api_v_1_0.route("/assets/host/add", methods=["POST"])
+def host_add():
+    # 新增主机信息api_host_add
+    json_data = request.get_data()
+    host_info_list = json.loads(json_data.decode("utf-8"))
+    try:
+        Host.insert_items(host_info_list)
+    except Exception:
+        resp = jsonify({"status": "error"})
+    else:
+        resp = jsonify({"status": "ok"})
+    return resp
+
+
+@csrf.exempt
+@api_v_1_0.route("/assets/host/delete", methods=["POST"])
+def host_delete():
+    # 根据ip删除主机信息api_host_delete
+    json_data = request.get_data()
+    ips = json.loads(json_data.decode("utf-8"))
+    try:
+        for ip in ips:
+            host = Host.query.filter(Host.ip == ip).first()
+            Host.delete_item(host)
+    except Exception:
+        resp = jsonify({"status": "error"})
+    else:
+        resp = jsonify({"status": "ok"})
+    return resp
 
 
 @api_v_1_0.route("/assets/hosts", methods=["GET"])
 def host_list():
+    # 主机列表接口api_host_list
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -40,6 +75,7 @@ def host_list():
 
 @api_v_1_0.route("/assets/services", methods=["GET"])
 def service_list():
+    # 服务列表接口api_service_list
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -78,6 +114,7 @@ def service_list():
 
 @api_v_1_0.route("/assets/domains", methods=["GET"])
 def domain_list():
+    # 域名列表接口api_domain_list
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=10)
     key = request.args.get("key", "")
@@ -105,30 +142,52 @@ def domain_list():
     })
 
 
+@csrf.exempt
+@api_v_1_0.route("/assets/domain/add", methods=["POST"])
+def domain_add():
+    # 新增域名信息api_domain_add
+    json_data = request.get_data()
+    domain_info_list = json.loads(json_data.decode("utf-8"))
+    try:
+        Domain.insert_items(domain_info_list)
+    except Exception:
+        resp = jsonify({"status": "error"})
+    else:
+        resp = jsonify({"status": "ok"})
+    return resp
+
+
+@csrf.exempt
+@api_v_1_0.route("/assets/domain/delete", methods=["POST"])
+def domain_delete():
+    # 根据域名删除域名信息api_domain_delete
+    json_data = request.get_data()
+    doamins = json.loads(json_data.decode("utf-8"))
+    try:
+        for name in doamins:
+            domain = Domain.query.filter(Domain.name == name).first()
+            Domain.delete_item(domain)
+    except Exception:
+        resp = jsonify({"status": "error"})
+    else:
+        resp = jsonify({"status": "ok"})
+    return resp
+
+
 @api_v_1_0.route("/tasks", methods=["GET"])
 def task_list():
+    # 任务列表接口api_task_list
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
-    time_type = request.args.get("time_type", "")
-    if time_type == "":
-        pagination = Task.query.filter(
-            or_(Task.func_type.ilike("%{}%".format(key)),
-                Task.time_type.ilike("%{}%".format(key)),
-                Task.status.ilike("%{}%".format(key)),
-                Task.targets.ilike("%{}%".format(key)),
-                Task.options.ilike("%{}%".format(key)),
-                Task.description.ilike("%{}%".format(key)))).order_by(
-            Task.start_time.desc()).paginate(page=page, per_page=per_page, error_out=False)
-    else:
-        pagination = Task.query.filter(Task.time_type == time_type,
-                                       or_(Task.func_type.ilike("%{}%".format(key)),
-                                           Task.time_type.ilike("%{}%".format(key)),
-                                           Task.status.ilike("%{}%".format(key)),
-                                           Task.targets.ilike("%{}%".format(key)),
-                                           Task.options.ilike("%{}%".format(key)),
-                                           Task.description.ilike("%{}%".format(key)))).order_by(
-            Task.start_time.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    pagination = Task.query.filter(
+        or_(Task.func_type.ilike("%{}%".format(key)),
+            Task.time_type.ilike("%{}%".format(key)),
+            Task.status.ilike("%{}%".format(key)),
+            Task.targets.ilike("%{}%".format(key)),
+            Task.options.ilike("%{}%".format(key)),
+            Task.description.ilike("%{}%".format(key)))).order_by(
+        Task.start_time.desc()).paginate(page=page, per_page=per_page, error_out=False)
     items = pagination.items
     prev = None
     if pagination.has_prev:
@@ -155,8 +214,9 @@ def task_list():
     })
 
 
-@api_v_1_0.route("/web/applications")
+@api_v_1_0.route("/web/applications", methods=["GET"])
 def application_list():
+    # 应用列表接口api_application_list
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -185,8 +245,9 @@ def application_list():
     })
 
 
-@api_v_1_0.route("/web/packages")
+@api_v_1_0.route("/web/packages", methods=["GET"])
 def package_list():
+    # 报文列表接口api_package_list
     application_id = request.args.get("application_id", "")
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
@@ -221,8 +282,9 @@ def package_list():
     })
 
 
-@api_v_1_0.route("/web/plugins")
+@api_v_1_0.route("/web/plugins", methods=["GET"])
 def plugin_list():
+    # 插件列表接口api_plugin_list
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")

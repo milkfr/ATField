@@ -15,6 +15,20 @@ class ApplicationUpdateForm(FlaskForm):
         self.plugin.choices = [(plugin.id, plugin.__repr__()) for plugin in Plugin.query.all()]
 
 
+class PackageInfoForm(FlaskForm):
+    application = StringField("应用", render_kw={"disabled": "disabled"})
+    entrance = StringField("入口", render_kw={"disabled": "disabled"})
+    path = StringField("路径", render_kw={"disabled": "disabled"})
+    method = StringField("方式", render_kw={"disabled": "disabled"})
+    status = IntegerField("状态码", render_kw={"disabled": "disabled"})
+    request = StringField("请求", render_kw={"disabled": "disabled"})
+    response = StringField("响应", render_kw={"disabled": "disabled"})
+    remarks = StringField("备注", render_kw={"disabled": "disabled"})
+
+    def __init__(self):
+        super(PackageInfoForm, self).__init__()
+
+
 class PackageUpdateForm(FlaskForm):
     application = StringField("应用", render_kw={"disabled": "disabled"})
     entrance = StringField("入口", render_kw={"disabled": "disabled"})

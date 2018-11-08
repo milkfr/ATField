@@ -8,7 +8,7 @@ def permission_required():
 
     # 白名单通过
     whitelist = ["api_v_1_0", "main.test", "auth.login", "auth.logout", "main.index", "bootstrap.static", "static"]
-    if request.endpoint in whitelist or request.endpoint.startswith("api"):
+    if not request.endpoint or request.endpoint in whitelist or request.endpoint.startswith("api"):
         return
 
     # 没有登录

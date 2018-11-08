@@ -11,6 +11,7 @@
           <div class="dropdown-menu" aria-labelledby="themes">
             <a class="dropdown-item" href="{{ url_for('auth.user_list') }}">用户控制</a>
             <a class="dropdown-item" href="{{ url_for('auth.role_list') }}">角色控制</a>
+            <a class="dropdown-item" href="{{ url_for('auth.role_new') }}">新增角色</a>
             <a class="dropdown-item" href="{{ url_for('auth.permission_list') }}">权限控制</a>
           </div>
         </li>
@@ -34,9 +35,7 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="themes">定时任务 <span class="caret"></span></a>
           <div class="dropdown-menu" aria-labelledby="themes">
-            <a class="dropdown-item" href="{{ url_for('tasks.timed_list') }}">定时任务列表</a>
-            <a class="dropdown-item" href="{{ url_for('tasks.once_list') }}">单次任务列表</a>
-            <a class="dropdown-item" href="{{ url_for('tasks.new') }}">新建单次任务</a>
+            <a class="dropdown-item" href="{{ url_for('tasks.task_list') }}">任务列表</a>
           </div>
         </li>
       </ul>

@@ -34,7 +34,7 @@ class ServiceUpdateForm(FlaskForm):
 
 class DomainUpdateForm(FlaskForm):
     host = SelectMultipleField("主机", coerce=str, render_kw={"disabled": "disabled"})
-    name = StringField("名称", validators=[DataRequired(), Length(1, 50)])
+    name = StringField("名称", render_kw={"disabled": "disabled"})
     description = StringField("描述", validators=[DataRequired(), Length(0, 500)])
     submit = SubmitField("提交")
 

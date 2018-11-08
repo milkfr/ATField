@@ -139,8 +139,7 @@ class Domain(db.Model):
             db.session.add(hd)
         db.session.commit()
 
-    def update_info(self, name, description):
-        self.name = name
+    def update_info(self, description):
         self.description = description
         db.session.add(self)
         db.session.commit()

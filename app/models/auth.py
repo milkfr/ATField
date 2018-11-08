@@ -16,6 +16,8 @@ class Role(db.Model):
     user_role = db.relationship("UserRole", backref="role")
     role_permission = db.relationship("RolePermission", backref="role")
 
+    DEPARTMENT = ["信息安全"]
+
     def __repr__(self):
         return "<{}-{}>".format(self.department, self.name)
 

@@ -26,6 +26,7 @@
     <th>{{ package.remarks}}</th>
     <th>{{ package.update_time }}</th>
     <th>
+        <a type="btn-link" href="{{ url_for('web.package_info', id=package.id) }}">查看包详情</a>
         <a type="btn-link" href="{{ url_for('web.package_update', id=package.id) }}">备注包</a>
     </th>
 </tr>

@@ -9,6 +9,7 @@ auth = HTTPBasicAuth()
 
 @api_v_1_0.route("/token", methods=["GET"])
 def get_token():
+    # 获取token，api_token
     return jsonify({"token": g.current_user.generate_api_auth_token(expiration=3600), 'expiration': 3600})
 
 

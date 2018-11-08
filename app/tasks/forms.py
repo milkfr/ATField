@@ -4,28 +4,6 @@ from wtforms.validators import DataRequired, Length
 from ..models.tasks import Task
 
 
-class TaskNewForm(FlaskForm):
-    func_type = SelectField("类型", coerce=str)
-    description = StringField("描述", validators=[DataRequired(), Length(0, 500)])
-    options = StringField("选项", validators=[DataRequired(), Length(0, 500)])
-    next = SubmitField("下一步")
-
-    def __init__(self):
-        super(TaskNewForm, self).__init__()
-        self.func_type.choices = [(func_type, func_type) for func_type in Task.FUNC_TYPES]
-
-
-class TaskTargetForm(FlaskForm):
-    func_type = StringField("类型", render_kw={"readonly": "true"})
-    description = StringField("描述", render_kw={"readonly": "true"})
-    options = StringField("选项", render_kw={"readonly": "true"})
-    targets = SelectMultipleField("目标", coerce=str)
-    submit = SubmitField("提交")
-
-    def __init__(self):
-        super(TaskTargetForm, self).__init__()
-
-
 class TaskInfoForm(FlaskForm):
     func_type = StringField("类型", render_kw={"disabled": "disabled"})
     time_type = StringField("时间类型", render_kw={"disabled": "disabled"})

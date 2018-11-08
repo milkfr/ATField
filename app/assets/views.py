@@ -6,8 +6,9 @@ from .forms import HostUpdateForm, DomainUpdateForm, ServiceUpdateForm
 from ..models.assets import Host, Domain, Service
 
 
-@assets.route("/host/list")
+@assets.route("/host/list", methods=["GET"])
 def host_list():
+    # 主机资产查看
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -22,6 +23,7 @@ def host_list():
 
 @assets.route("/host/update", methods=["GET", "POST"])
 def host_update():
+    # 主机资产信息修改
     host_id = request.args.get("id", "", type=str)
     host = Host.query.filter(Host.id == host_id).first()
     form = HostUpdateForm(host)
@@ -35,8 +37,9 @@ def host_update():
     return render_template("assets/host_update.html", form=form)
 
 
-@assets.route("/service/list")
+@assets.route("/service/list", methods=["GET"])
 def service_list():
+    # 服务资产查看
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -54,6 +57,7 @@ def service_list():
 
 @assets.route("/service/update", methods=["GET", "POST"])
 def service_update():
+    # 服务资产信息修改
     service_id = request.args.get("id", "", type=str)
     service = Service.query.filter(Service.id == service_id).first()
     form = ServiceUpdateForm()
@@ -70,8 +74,9 @@ def service_update():
     return render_template("assets/service_update.html", form=form)
 
 
-@assets.route("/domain/list")
+@assets.route("/domain/list", methods=["GET"])
 def domain_list():
+    # 域名资产查看
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -85,11 +90,12 @@ def domain_list():
 
 @assets.route("/domain/update", methods=["GET", "POST"])
 def domain_update():
+    # 域名资产信息修改
     domain_id = request.args.get("id", "", type=str)
     domain = Domain.query.filter(Domain.id == domain_id).first()
     form = DomainUpdateForm(domain)
     if form.validate_on_submit():
-        domain.update_info(name=form.name.data, description=form.description.data)
+        domain.update_info(description=form.description.data)
         return redirect(url_for("assets.domain_list"))
     form.name.data = domain.name
     form.description.data = domain.description

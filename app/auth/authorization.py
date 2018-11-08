@@ -2,12 +2,12 @@ from flask import render_template, request, url_for, redirect
 from ..models.auth import User, Role, Permission
 
 from . import auth
-from .forms import UserUpdateForm, RoleUpdateForm
+from .forms import UserUpdateForm, RoleUpdateForm, RoleNewForm
 
 
 @auth.route("/user/list", methods=["GET"])
 def user_list():
-    # 获取用户列表
+    # 用户列表查看
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -20,7 +20,7 @@ def user_list():
 
 @auth.route("/user/update", methods=["GET", "POST"])
 def user_update():
-    # 用户角色信息设定
+    # 用户角色信息修改
     user_id = request.args.get("id", "", type=str)
     user = User.query.filter(User.id == user_id).first()
     form = UserUpdateForm(user)
@@ -41,7 +41,7 @@ def user_update():
 
 @auth.route("/role/list", methods=["GET"])
 def role_list():
-    # 角色列表
+    # 角色列表查看
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
@@ -54,7 +54,7 @@ def role_list():
 
 @auth.route("/role/update", methods=["GET", "POST"])
 def role_update():
-    # 角色权限信息设定
+    # 角色权限信息修改
     role_id = request.args.get("id", '', type=str)
     role = Role.query.filter(Role.id == role_id).first()
     form = RoleUpdateForm()
@@ -70,9 +70,20 @@ def role_update():
     return render_template("auth/role_update.html", role=role, Permission=Permission)
 
 
+@auth.route("/role/new", methods=["GET", "POST"])
+def role_new():
+    # 角色新增
+    form = RoleNewForm()
+    if request.method == "POST":
+        role_info_list = {"name": form.name.data, "department": form.department.data},
+        Role.insert_items(role_info_list)
+        return redirect(url_for("auth.role_list"))
+    return render_template("auth/role_new.html", form=form)
+
+
 @auth.route("/permission/list", methods=["GET"])
 def permission_list():
-    # 获取权限列表
+    # 权限列表查看
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "", type=str)
