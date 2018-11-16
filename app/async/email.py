@@ -5,14 +5,15 @@ from app import mail, celery
 
 @celery.task
 def send_async_email(data):
-    app = current_app._get_current_object()
-    subject = data["subject"]
-    to = data["to"]
-    msg = Message(app.config["MAIL_SUBJECT_PREFIX"] + ' ' + subject,
-                  sender=app.config["MAIL_SENDER"], recipients=[to])
-    msg.body = data["body"]
-    msg.html = data["html"]
-    mail.send(msg)
+    print(data)
+    # app = current_app._get_current_object()
+    # subject = data["subject"]
+    # to = data["to"]
+    # msg = Message(app.config["MAIL_SUBJECT_PREFIX"] + ' ' + subject,
+    #               sender=app.config["MAIL_SENDER"], recipients=[to])
+    # msg.body = data["body"]
+    # msg.html = data["html"]
+    # mail.send(msg)
 
 
 def send_email(to, subject, template, **kwargs):

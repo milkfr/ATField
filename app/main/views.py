@@ -1,7 +1,9 @@
 from flask import render_template, current_app, send_from_directory
 
 from . import main
-from app.async.email import send_email
+
+# from app.async.scan import do_scan_task
+from workers.domain_resolution import run
 
 
 @main.route('/', methods=["GET"])
@@ -11,7 +13,10 @@ def index():
 
 @main.route("/test/", methods=["GET", "POST"])
 def test():
-    send_email(to="@qq.com", subject="Confirm test", template="tasks/test", user="123", token="345")
+    # do_scan_task.delay("service probe by masscan",
+    #               "every day", "-p1-5000 --rate 1000", "127.0.0.1", "test")
+    result = run.delay(targets=2)
+    print(result)
     return render_template("index.html")
 
 

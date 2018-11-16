@@ -214,6 +214,38 @@ def task_list():
     })
 
 
+@api_v_1_0.route("/task/new", methods=["POST"])
+def task_new():
+    json_data = request.get_data()
+    task_info = json.loads(json_data.decode("utf-8"))
+    try:
+        task = Task.insert_task_and_return(task_info["data"]["func_type"],
+                                           task_info["data"]["time_type"],
+                                           task_info["data"]["options"],
+                                           task_info["data"]["description"],
+                                           task_info["data"]["target"])
+    except Exception:
+        resp = jsonify({"status": "err"})
+    else:
+        resp = jsonify({"status": "ok", "id": task.id})
+    return resp
+
+
+@api_v_1_0.route("/task/result", methods=["POST"])
+def task_result():
+    json_data = request.get_data()
+    task_info = json.loads(json_data.decode("utf-8"))
+    try:
+        task = Task.query.filter(Task.id == task_info["id"])
+        task.update_result(task_info["result"], task_info["start_time"], task_info["end_time"])
+    except Exception:
+        resp = jsonify({"status": "err"})
+    else:
+        resp = jsonify({"status": "ok"})
+    return resp
+
+
+
 @api_v_1_0.route("/web/applications", methods=["GET"])
 def application_list():
     # 应用列表接口api_application_list

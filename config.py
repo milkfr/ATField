@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from kombu import Exchange, Queue
 from datetime import timedelta
 
-
 load_dotenv(dotenv_path=".flaskenv")
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,68 +20,54 @@ class Config:
     MAIL_SUBJECT_PREFIX = "[milkfr]"
     MAIL_SENDER = os.environ.get("FLASK_MAIL_USERNAME")
 
-    @staticmethod
-    def init_app(app):
-        pass
-
-
-class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get("FLASK_DATABASE_URI",
                                              "sqlite:///"+os.path.join(basedir, "data-dev.sqlite"))
     ELASTICSEARCH_HOST = os.environ.get("FLASK_ELASTICSEARCH_HOST", "localhost:9200")
-    CELERY_RESULT_BACKEND = os.environ.get("FLASK_CELERY_RESULT_BACKEND")
+    # CELERY_RESULT_BACKEND = os.environ.get("FLASK_CELERY_RESULT_BACKEND")
     CELERY_BROKER_URL = os.environ.get("FLASK_CELERY_BROKER_URL")
+
     CELERY_QUEUES = (
-        Queue("default", Exchange("default"), routing_key="default"),
+        # Queue("default", Exchange("default"), routing_key="default"),
         Queue("task_domain_resolution", Exchange("task_domain_resolution"),
               routing_key="task_domain_resolution"),
-        Queue("task_service_probe_by_masscan", Exchange("task_service_probe_by_masscan"),
-              routing_key="task_service_probe_by_masscan"),
-        Queue("task_service_probe_by_nmap", Exchange("task_service_probe_by_nmap"),
-              routing_key="task_service_probe_by_nmap")
+        Queue("task_port_scan_quick", Exchange("task_port_scan_quick"),
+              routing_key="task_port_scan_quick"),
+        Queue("task_port_scan_slow", Exchange("task_port_scan_slow"),
+              routing_key="task_port_scan_slow")
     )
     # 路由
     CELERY_ROUTES = {
-        "app.async.domain_resolution.do_async_scan": {"queue": "task_domain_resolution",
+        "workers.domain_resolution.worker": {"queue": "task_domain_resolution",
                                                       "routing_key": "task_domain_resolution"},
-        "app.async.service_probe_by_masscan.do_async_scan": {"queue": "task_service_probe_by_masscan",
-                                                             "routing_key": "task_service_probe_by_masscan"},
-        "app.async.service_probe_by_nmap.do_async_scan": {"queue": "task_service_probe_by_nmap",
-                                                          "routing_key": "task_service_probe_by_nmap"},
+        "workers.port_scan_quick.worker": {"queue": "task_port_scan_quick",
+                                                             "routing_key": "task_port_scan_quick"},
+        "workers.port_scan_slow.worker": {"queue": "task_port_scan_slow",
+                                                          "routing_key": "task_port_scan_slow"},
     }
 
     CELERY_TIMEZONE = "UTC"
 
     CELERYBEAT_SCHEDULE = {
         "taskA_schedule": {
-            "task": "app.async.scan.do_scan_task",
+            "task": "workers.domain_resolution.worker",
             "schedule": timedelta(seconds=60),
-            "args": ("domain resolution",
-                     "every day", "none", "www.baidu.com", "test")
+            "kwargs": {"targets": ""},
         },
         'taskB_scheduler': {
-            "task": "app.async.scan.do_scan_task",
-            "schedule": timedelta(seconds=60),
-            "args": ("service probe by masscan",
-                     "every day", "-p1-5000 --rate 1000", "127.0.0.1", "test")
+            "task": "workers.port_scan_quick.worker",
+            "schedule": timedelta(seconds=6),
+            "kwargs": {"targets": "-p1-5000 --rate 1000"},
         },
         'add_schedule': {
-            "task": "app.async.scan.do_scan_task",
-            "schedule": timedelta(seconds=60),
-            "args": ("service probe by nmap",
-                     "every day", "-n -Pn -sT -p 1-5000", "127.0.0.1", "test")
+            "task": "worker.port_scan_slow.worker",
+            "schedule": timedelta(seconds=6),
+            "kwargs": {"targets": "-n -Pn -sT -p 1-5000"},
         }
     }
+    @staticmethod
+    def init_app(app):
+        pass
 
 
-class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get("FLASK_DATABASE_URI",
-                                             "sqlite:///"+os.path.join(basedir, "data-pro.sqlite"))
-
-
-config = {
-    "default": DevelopmentConfig,
-    "production": ProductionConfig,
-    "development": DevelopmentConfig,
-}
+config = Config

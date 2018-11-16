@@ -2,7 +2,7 @@ import os
 import json
 import click
 from flask_migrate import Migrate, upgrade
-from app import create_app, db, es
+from app import create_app, db
 from app.models.auth import User, Role, UserRole, Permission, RolePermission
 from app.models.assets import Host, Domain, Service, HostDomain
 from app.models.tasks import Task
@@ -12,13 +12,13 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".flaskenv")
 
-app = create_app(os.environ.get("FLASK_CONFIG", default="default"))
+app = create_app()
 migrate = Migrate(app, db)
 
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(app=app, db=db, es=es, Task=Task,
+    return dict(app=app, db=db, Task=Task,
                 User=User, Role=Role, UserRole=UserRole,
                 Permission=Permission, RolePermission=RolePermission,
                 Application=Application, Package=Package, Plugin=Plugin, ApplicationPlugin=ApplicationPlugin,
