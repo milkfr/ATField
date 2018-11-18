@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - 127.0.0.1:8080:8080
+    links:
+      - mysql:mysql
+      - rabbitmq:rabbitmq
+    networks:
+      - backend
+      - frontend
+
+  mysql:
+    image: mysql
+    restart: always
+    ports:
+      - 127.0.0.1:3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      #MYSQL_DATABASE: atfield
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq
+    restart: always
+    environment:
+      # RABBITMQ_ERLANG_COOKIE: "aaaaaaaaaaaaa"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "abc"
+    ports:
+      #- 127.0.0.1:15672:15672
+      - 127.0.0.1:5672:5672
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+volumes:
+  mysql:
+  rabbitmq:

@@ -119,42 +119,42 @@ def deploy():
                                        add_permission_list=[permission.id for permission in Permission.query.all()])
 
     # add host
-    with open("ip.txt", "r") as f:
-        host_info_list = []
-        for line in f.readlines():
-            line = json.loads(line)
-            host_info_list.append({"ip": line["address"], "name": None, "description": None})
-        Host.insert_items(host_info_list)
-
-    # update host and add service
-    with open("ip.txt", "r") as f:
-        for line in f.readlines():
-            line = json.loads(line)
-            host = Host.query.filter(Host.ip == line["address"]).first()
-            host.update_asset_info(line["status"])
-            service_info_list = []
-            for service in line["services"]:
-                service_info_list.append(
-                    {"ip": host.ip, "port": service["port"], "tunnel": service["tunnel"],
-                     "protocol": service["protocol"], "state": service["state"],
-                     "service": service["service"], "name": None, "description": None}
-                )
-            Service.insert_items(service_info_list)
-
-    # add domain
-    domain_info_list = []
-    with open("domain.txt") as f:
-        for line in f.readlines():
-            line = line.strip()
-            domain_info_list.append({"name": line, "description": None})
-    Domain.insert_items(domain_info_list)
-
-    # update domain
-    for domain in Domain.query.all():
-        import dns.resolver
-        try:
-            answer = dns.resolver.query(domain.name, 'A')
-            for i in answer.response.answer:
-                domain.update_asset_info([j.address for j in i.items])
-        except Exception as e:
-            print(e)
+    # with open("ip.txt", "r") as f:
+    #     host_info_list = []
+    #     for line in f.readlines():
+    #         line = json.loads(line)
+    #         host_info_list.append({"ip": line["address"], "name": None, "description": None})
+    #     Host.insert_items(host_info_list)
+    #
+    # # update host and add service
+    # with open("ip.txt", "r") as f:
+    #     for line in f.readlines():
+    #         line = json.loads(line)
+    #         host = Host.query.filter(Host.ip == line["address"]).first()
+    #         host.update_asset_info(line["status"])
+    #         service_info_list = []
+    #         for service in line["services"]:
+    #             service_info_list.append(
+    #                 {"ip": host.ip, "port": service["port"], "tunnel": service["tunnel"],
+    #                  "protocol": service["protocol"], "state": service["state"],
+    #                  "service": service["service"], "name": None, "description": None}
+    #             )
+    #         Service.insert_items(service_info_list)
+    #
+    # # add domain
+    # domain_info_list = []
+    # with open("domain.txt") as f:
+    #     for line in f.readlines():
+    #         line = line.strip()
+    #         domain_info_list.append({"name": line, "description": None})
+    # Domain.insert_items(domain_info_list)
+    #
+    # # update domain
+    # for domain in Domain.query.all():
+    #     import dns.resolver
+    #     try:
+    #         answer = dns.resolver.query(domain.name, 'A')
+    #         for i in answer.response.answer:
+    #             domain.update_asset_info([j.address for j in i.items])
+    #     except Exception as e:
+    #         print(e)

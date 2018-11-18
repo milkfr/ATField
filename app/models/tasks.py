@@ -70,10 +70,9 @@ class Task(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update_result(self, result, start_time, end_time):
+    def update_result(self, result):
         self.status = Task.STATUS_END
         self.result = result
-        self.start_time = start_time
-        self.end_time = end_time
+        self.end_time = datetime.utcnow()
         db.session.add(self)
         db.session.commit()

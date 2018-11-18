@@ -28,22 +28,26 @@ class Config:
     CELERY_BROKER_URL = os.environ.get("FLASK_CELERY_BROKER_URL")
 
     CELERY_QUEUES = (
-        # Queue("default", Exchange("default"), routing_key="default"),
+    #     # Queue("default", Exchange("default"), routing_key="default"),
+        Queue("task_result_save", Exchange("task_result_save"),
+              routing_key="task_result_save"),
         Queue("task_domain_resolution", Exchange("task_domain_resolution"),
               routing_key="task_domain_resolution"),
-        Queue("task_port_scan_quick", Exchange("task_port_scan_quick"),
-              routing_key="task_port_scan_quick"),
-        Queue("task_port_scan_slow", Exchange("task_port_scan_slow"),
-              routing_key="task_port_scan_slow")
+    #     Queue("task_port_scan_quick", Exchange("task_port_scan_quick"),
+    #           routing_key="task_port_scan_quick"),
+    #     Queue("task_port_scan_slow", Exchange("task_port_scan_slow"),
+    #           routing_key="task_port_scan_slow")
     )
-    # 路由
+    # # 路由
     CELERY_ROUTES = {
+        "workers.result.save": {"queue": "task_result_save",
+                                "routing_key": "task_result_save"},
         "workers.domain_resolution.worker": {"queue": "task_domain_resolution",
                                                       "routing_key": "task_domain_resolution"},
-        "workers.port_scan_quick.worker": {"queue": "task_port_scan_quick",
-                                                             "routing_key": "task_port_scan_quick"},
-        "workers.port_scan_slow.worker": {"queue": "task_port_scan_slow",
-                                                          "routing_key": "task_port_scan_slow"},
+        # "workers.port_scan_quick.worker": {"queue": "task_port_scan_quick",
+        #                                                      "routing_key": "task_port_scan_quick"},
+        # "workers.port_scan_slow.worker": {"queue": "task_port_scan_slow",
+        #                                                   "routing_key": "task_port_scan_slow"},
     }
 
     CELERY_TIMEZONE = "UTC"
@@ -54,17 +58,18 @@ class Config:
             "schedule": timedelta(seconds=60),
             "kwargs": {"targets": ""},
         },
-        'taskB_scheduler': {
-            "task": "workers.port_scan_quick.worker",
-            "schedule": timedelta(seconds=6),
-            "kwargs": {"targets": "-p1-5000 --rate 1000"},
-        },
-        'add_schedule': {
-            "task": "worker.port_scan_slow.worker",
-            "schedule": timedelta(seconds=6),
-            "kwargs": {"targets": "-n -Pn -sT -p 1-5000"},
-        }
+        # 'taskB_scheduler': {
+        #     "task": "workers.port_scan_quick.worker",
+        #     "schedule": timedelta(seconds=6),
+        #     "kwargs": {"targets": "-p1-5000 --rate 1000"},
+        # },
+        # 'add_schedule': {
+        #     "task": "worker.port_scan_slow.worker",
+        #     "schedule": timedelta(seconds=6),
+        #     "kwargs": {"targets": "-n -Pn -sT -p 1-5000"},
+        # }
     }
+
     @staticmethod
     def init_app(app):
         pass
