@@ -6,21 +6,21 @@ import os
 from celery.signals import before_task_publish, task_postrun
 from app.models.assets import Host
 from app.models.tasks import Task
+from workers.result import save
 
 
-@before_task_publish.connect
+@before_task_publish.connect(sender="workers.port_scan_slow.worker")
 def before(sender=None, headers=None, body=None, properties=None, **kw):
     targets = ' '.join([host.name for host in Host.query.all()])
-    task = Task.insert_task_and_return("test", "test", "test", "test", targets)
+    task = Task.insert_task_and_return("port scan slow", "timed", "", "周期nmap慢扫", targets)
     body[1]["targets"] = targets
     headers["id"] = task.id
-    pass
 
 
-@task_postrun.connect
-def after(task_id=None, retval=None, **kw):
-    print(task_id)
-    print(retval)
+@task_postrun.connect()
+def after(sender=None, task_id=None, retval=None, **kw):
+    if sender.name == "workers.port_scan_slow.worker":
+        save.apply_async(args=(retval, task_id))
 
 
 @celery.task(bind=True)
