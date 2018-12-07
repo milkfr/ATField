@@ -35,16 +35,21 @@ def worker(self, targets):
     count = 0
     self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
     for domain in targets.split():
-        item = {}
-
+        item = {
+            "ip": None,
+            "description": "",
+            "domain": "",
+        }
         try:
             answer = dns.resolver.query(domain, 'A')
+            item["domain"] = domain
             for i in answer.response.answer:
-                item["domain"] = domain
-                item["ip"] = [j.address for j in i.items]
-                item["error"] = ""
+                if i.rdtype == 1:
+                    item["ip"] = [j.address for j in i.items]
+                elif i.rdtype == 5:
+                    item["description"] += "CNAME: " + i.name.to_text() + " "
         except Exception as e:
-            item["error"] = e.__repr__()
+            item["description"] += e.__repr__()
             result["result"]["failed"] += 1
 
         result["result"]["details"].append(item)
@@ -53,5 +58,3 @@ def worker(self, targets):
 
     result["end_time"] = datetime.utcnow()
     return result
-    # save.delay(result, worker.request.id)
-

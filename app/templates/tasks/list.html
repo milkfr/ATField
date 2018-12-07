@@ -24,7 +24,6 @@
     <th>{{ task.end_time }}</th>
     <th>{{ task.status }}</th>
     <th>{{ task.description }}</th>
-    <th>{{ task.targets }}</th>
     <th>{% for task in task.host_list %}{{ host.__repr__() }}{% endfor %}</th>
     <th><a type="btn-link" href="{{ url_for('tasks.info', id=task.id) }}">查看详细</a></th>
 </tr>

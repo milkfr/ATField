@@ -13,6 +13,47 @@ services:
       - backend
       - frontend
 
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile_celery_beat
+    restart: always
+    links:
+      - rabbitmq:rabbitmq
+    networks:
+      - backend
+
+  celery_result_save:
+    build:
+      context: .
+      dockerfile: Dockerfile_celery_result_save
+    restart: always
+    links:
+      - mysql:mysql
+      - rabbitmq:rabbitmq
+    networks:
+      - backend
+
+  celery_domain_resolution:
+    build:
+      context: .
+      dockerfile: Dockerfile_celery_domain_resolution
+    restart: always
+    links:
+      - rabbitmq:rabbitmq
+    networks:
+      - backend
+
+  celery_port_monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile_celery_port_monitor
+    restart: always
+    links:
+      - rabbitmq:rabbitmq
+    networks:
+      - backend
+
   mysql:
     image: mysql
     restart: always
@@ -37,9 +78,9 @@ services:
       # RABBITMQ_ERLANG_COOKIE: "aaaaaaaaaaaaa"
       RABBITMQ_DEFAULT_USER: "rabbitmq"
       RABBITMQ_DEFAULT_PASS: "rabbitmq"
-      RABBITMQ_DEFAULT_VHOST: "abc"
+      RABBITMQ_DEFAULT_VHOST: "atfield"
     ports:
-      #- 127.0.0.1:15672:15672
+      - 127.0.0.1:15672:15672
       - 127.0.0.1:5672:5672
     volumes:
       - rabbitmq:/var/lib/rabbitmq

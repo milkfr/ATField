@@ -1,0 +1,16 @@
+FROM python:3.6
+
+RUN apt-get update
+RUN apt-get install -y nmap
+
+COPY requirements.txt requirements.txt
+RUN python -m venv venv
+RUN venv/bin/pip install -r requirements.txt
+
+COPY app app
+COPY migrations migrations
+COPY workers workers
+COPY wsgi.py config.py celery_worker.py boot_celery_port_monitor.sh .flaskenv ./
+
+# run-time configuration
+ENTRYPOINT ["./boot_celery_port_monitor.sh"]

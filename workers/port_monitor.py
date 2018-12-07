@@ -9,22 +9,25 @@ from app.models.tasks import Task
 from workers.result import save
 
 
-@before_task_publish.connect(sender="workers.port_scan_slow.worker")
+@before_task_publish.connect(sender="workers.port_monitor.worker")
 def before(sender=None, headers=None, body=None, properties=None, **kw):
-    targets = ' '.join([host.name for host in Host.query.all()])
-    task = Task.insert_task_and_return("port scan slow", "timed", "", "周期nmap慢扫", targets)
+    targets = ' '.join([host.ip for host in Host.query.all()])
+    task = Task.insert_task_and_return("port monitor", "timed", "", "周期nmap", targets)
     body[1]["targets"] = targets
     headers["id"] = task.id
 
 
 @task_postrun.connect()
 def after(sender=None, task_id=None, retval=None, **kw):
-    if sender.name == "workers.port_scan_slow.worker":
+    print(retval)
+    if sender.name == "workers.port_monitor.worker":
         save.apply_async(args=(retval, task_id))
 
 
-@celery.task(bind=True)
+@celery.task(bind=True, name="workers.port_monitor.worker")
 def worker(self, targets, options):
+    print(targets)
+    print(options)
     result = {
         "start_time": datetime.utcnow(),
         "end_time": datetime.utcnow(),
@@ -40,6 +43,7 @@ def worker(self, targets, options):
     for ip in targets.split():
         temp_file = "nmap.log"
         scan_cmd = "nmap {} -oX {} {}".format(options, temp_file, ip)
+        print(scan_cmd)
         call(scan_cmd, shell=True)
 
         item = {}
@@ -68,6 +72,7 @@ def worker(self, targets, options):
             if os.path.exists(temp_file):
                 os.remove(temp_file)
         except Exception as e:
+            print(e)
             item["error"] = e.__repr__()
             result["result"]["failed"] += 1
 

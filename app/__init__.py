@@ -12,7 +12,6 @@ bootstrap = Bootstrap()
 csrf = CSRFProtect()
 mail = Mail()
 celery = Celery(__name__,
-                # backend=config.CELERY_RESULT_BACKEND,
                 broker=config.CELERY_BROKER_URL)
 
 

@@ -116,7 +116,7 @@ def service_list():
 def domain_list():
     # 域名列表接口api_domain_list
     page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=10)
+    per_page = request.args.get("per_page", 10, type=int)
     key = request.args.get("key", "")
     pagination = Domain.query.filter(or_(Domain.name.ilike("%{}%".format(key)),
                                          Domain.description.ilike("%{}%".format(key)),)).paginate(
