@@ -1,4 +1,5 @@
 [mysqld]
+wait_timeout = 108000
 character-set-server=UTF8MB4
 user=mysql
 [client]

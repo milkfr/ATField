@@ -1,0 +1,17 @@
+FROM python:3.6
+
+RUN useradd -d /home/flask -m -s /bin/bash flask -p flask
+WORKDIR /home/flask
+USER flask
+
+COPY requirements.txt requirements.txt
+RUN python -m venv venv
+RUN venv/bin/pip install -r requirements.txt
+
+COPY app app
+COPY workers workers
+COPY wsgi.py config.py celery_worker.py .flaskenv ./
+COPY docker/boot_celery_awvs.sh ./
+
+# run-time configuration
+ENTRYPOINT ["./boot_celery_awvs.sh"]

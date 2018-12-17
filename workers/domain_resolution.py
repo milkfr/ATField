@@ -10,7 +10,7 @@ from workers.result import save
 @before_task_publish.connect(sender="workers.domain_resolution.worker")
 def before(sender=None, headers=None, body=None, properties=None, **kw):
     targets = ' '.join([domain.name for domain in Domain.query.all()])
-    task = Task.insert_task_and_return("domain resolution", "timed", "", "周期域名检测", targets)
+    task = Task.insert_task_and_return("domain resolution", "timed", "周期域名检测", targets)
     body[1]["targets"] = targets
     headers["id"] = task.id
 
@@ -36,13 +36,13 @@ def worker(self, targets):
     self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
     for domain in targets.split():
         item = {
-            "ip": None,
+            "ip": [],
             "description": "",
             "domain": "",
         }
         try:
-            answer = dns.resolver.query(domain, 'A')
             item["domain"] = domain
+            answer = dns.resolver.query(domain, 'A')
             for i in answer.response.answer:
                 if i.rdtype == 1:
                     item["ip"] = [j.address for j in i.items]

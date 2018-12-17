@@ -10,7 +10,8 @@ RUN venv/bin/pip install -r requirements.txt
 
 COPY app app
 COPY workers workers
-COPY wsgi.py config.py celery_worker.py boot_celery_result_save.sh .flaskenv ./
+COPY wsgi.py config.py celery_worker.py .flaskenv ./
+COPY docker/boot_celery_domain_resolution.sh ./
 
 # run-time configuration
-ENTRYPOINT ["./boot_celery_result_save.sh"]
+ENTRYPOINT ["./boot_celery_domain_resolution.sh"]

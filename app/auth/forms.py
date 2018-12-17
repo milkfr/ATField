@@ -7,7 +7,7 @@ from ..models.auth import Role, Permission
 
 class LoginForm(FlaskForm):
     username = StringField("用户名", validators=[DataRequired(), Length(1, 20)])
-    password = PasswordField("密码", validators=[DataRequired(), Length(6, 12)])
+    password = PasswordField("密码", validators=[DataRequired(), Length(6, 20)])
     submit = SubmitField("登录")
 
 

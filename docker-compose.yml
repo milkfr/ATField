@@ -2,10 +2,12 @@ version: "3"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile_app
     restart: always
     ports:
-      - 127.0.0.1:8080:8080
+      - 127.0.0.1:8088:8080
     links:
       - mysql:mysql
       - rabbitmq:rabbitmq
@@ -16,9 +18,10 @@ services:
   celery_beat:
     build:
       context: .
-      dockerfile: Dockerfile_celery_beat
+      dockerfile: ./docker/Dockerfile_celery_beat
     restart: always
     links:
+      - mysql:mysql
       - rabbitmq:rabbitmq
     networks:
       - backend
@@ -26,7 +29,7 @@ services:
   celery_result_save:
     build:
       context: .
-      dockerfile: Dockerfile_celery_result_save
+      dockerfile: ./docker/Dockerfile_celery_result_save
     restart: always
     links:
       - mysql:mysql
@@ -37,7 +40,7 @@ services:
   celery_domain_resolution:
     build:
       context: .
-      dockerfile: Dockerfile_celery_domain_resolution
+      dockerfile: ./docker/Dockerfile_celery_domain_resolution
     restart: always
     links:
       - rabbitmq:rabbitmq
@@ -47,12 +50,22 @@ services:
   celery_port_monitor:
     build:
       context: .
-      dockerfile: Dockerfile_celery_port_monitor
+      dockerfile: ./docker/Dockerfile_celery_port_monitor
     restart: always
     links:
       - rabbitmq:rabbitmq
     networks:
       - backend
+
+  celery_awvs:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile_celery_awvs
+    restart: always
+    links:
+    - rabbitmq:rabbitmq
+    networks:
+    - backend
 
   mysql:
     image: mysql
@@ -84,7 +97,7 @@ services:
       - 127.0.0.1:5672:5672
     volumes:
       - rabbitmq:/var/lib/rabbitmq
-      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
     networks:
       - backend
 

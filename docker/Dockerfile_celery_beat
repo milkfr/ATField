@@ -7,13 +7,11 @@ USER flask
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
 RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/pip install gunicorn gevent
 
 COPY app app
-COPY migrations migrations
 COPY workers workers
-COPY wsgi.py config.py celery_worker.py boot.sh .flaskenv ./
+COPY wsgi.py config.py celery_worker.py .flaskenv ./
+COPY docker/boot_celery_beat.sh ./
 
 # run-time configuration
-EXPOSE 8080
-ENTRYPOINT ["./boot.sh"]
+ENTRYPOINT ["./boot_celery_beat.sh"]

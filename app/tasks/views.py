@@ -16,7 +16,6 @@ def task_list():
             Task.time_type.ilike("%{}%".format(key)),
             Task.status.ilike("%{}%".format(key)),
             Task.targets.ilike("%{}%".format(key)),
-            Task.options.ilike("%{}%".format(key)),
             Task.description.ilike("%{}%".format(key)))).order_by(
         Task.start_time.desc()).paginate(page=page, per_page=per_page, error_out=False)
     return render_template("tasks/list.html", pagination=pagination, url="tasks.task_list",
@@ -32,7 +31,6 @@ def info():
     form.func_type.data = task.func_type
     form.time_type.data = task.time_type
     form.description.data = task.description
-    form.options.data = task.options
     form.targets.data = task.targets
     form.status.data = task.status
     form.start_time.data = task.start_time

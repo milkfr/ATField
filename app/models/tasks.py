@@ -12,9 +12,8 @@ class Task(db.Model):
     func_type = db.Column(db.String(50))
     time_type = db.Column(db.String(50))
     description = db.Column(db.String(500))
-    targets = db.Column(db.Text)
-    options = db.Column(db.String(500))
-    result = db.Column(db.Text)
+    targets = db.Column(db.UnicodeText)
+    result = db.Column(db.UnicodeText)
 
     def __repr__(self):
         return "<Task {} {}>".format(self.func_type, self.time_type)
@@ -45,10 +44,10 @@ class Task(db.Model):
 
     @staticmethod
     def insert_tasks(task_info_list):
-        # task_info_list = [{"func_type": None, "time_type": None, "options": None,
+        # task_info_list = [{"func_type": None, "time_type": None,
         # "description": None, "targets": list},...]
         for task_info in task_info_list:
-            task = Task(tyep=task_info["func_type"], time_type=task_info["time_type"], options=task_info["options"],
+            task = Task(tyep=task_info["func_type"], time_type=task_info["time_type"],
                         description=task_info["description"], targets=task_info["targets"])
             task.status = Task.STATUS_PENDING
             task.start_time = datetime.utcnow()
@@ -56,8 +55,8 @@ class Task(db.Model):
         db.session.commit()
 
     @staticmethod
-    def insert_task_and_return(func_type, time_type, options, description, targets):
-        task = Task(func_type=func_type, time_type=time_type, options=options,
+    def insert_task_and_return(func_type, time_type, description, targets):
+        task = Task(func_type=func_type, time_type=time_type,
                     targets=targets, description=description)
         task.status = Task.STATUS_PENDING
         task.start_time = datetime.utcnow()

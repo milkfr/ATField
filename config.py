@@ -28,15 +28,27 @@ class Config:
               routing_key="task_domain_resolution"),
         Queue("task_port_monitor", Exchange("task_port_monitor"),
               routing_key="task_port_monitor"),
+        Queue("task_awvs", Exchange("task_awvs"),
+              routing_key="task_awvs"),
     )
     # # 路由
     CELERY_ROUTES = {
-        "workers.result.save": {"queue": "task_result_save",
-                                "routing_key": "task_result_save"},
-        "workers.domain_resolution.worker": {"queue": "task_domain_resolution",
-                                             "routing_key": "task_domain_resolution"},
-        "workers.port_monitor.worker": {"queue": "task_port_monitor",
-                                        "routing_key": "task_port_monitor"},
+        "workers.result.save": {
+            "queue": "task_result_save",
+            "routing_key": "task_result_save"
+        },
+        "workers.domain_resolution.worker": {
+            "queue": "task_domain_resolution",
+            "routing_key": "task_domain_resolution"
+        },
+        "workers.port_monitor.worker": {
+            "queue": "task_port_monitor",
+            "routing_key": "task_port_monitor"
+        },
+        "workers.awvs.worker": {
+            "queue": "task_awvs",
+            "routing_key": "task_awvs"
+        }
     }
 
     CELERY_TIMEZONE = "Asia/Shanghai"
@@ -54,16 +66,11 @@ class Config:
             # "schedule": timedelta(seconds=10),
             "kwargs": {"targets": "", "options": "-n -Pn -sT -p 8080"},
         },
-        # "port_scan_quick_scheduler": {
-        #     "task": "workers.port_scan_quick.worker",
-        #     "schedule": timedelta(seconds=60),
-        #     "kwargs": {"targets": "-p1-5000 --rate 1000"},
-        # },
-        # "port_scan_slow_scheduler": {
-        #     "task": "worker.port_scan_slow.worker",
-        #     "schedule": timedelta(seconds=60),
-        #     "kwargs": {"targets": "-n -Pn -sT -p 1-5000"},
-        # }
+        "awvs_schedule": {
+            "task": "workers.awvs.worker",
+            "schedule": timedelta(seconds=10),
+            "kwargs": {"targets": "127.0.0.1:8088", "options": "do scan"},
+        },
     }
 
     @staticmethod

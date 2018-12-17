@@ -8,9 +8,9 @@ RUN python -m venv venv
 RUN venv/bin/pip install -r requirements.txt
 
 COPY app app
-COPY migrations migrations
 COPY workers workers
-COPY wsgi.py config.py celery_worker.py boot_celery_port_monitor.sh .flaskenv ./
+COPY wsgi.py config.py celery_worker.py .flaskenv ./
+COPY docker/boot_celery_port_monitor.sh ./
 
 # run-time configuration
 ENTRYPOINT ["./boot_celery_port_monitor.sh"]

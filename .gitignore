@@ -11,3 +11,5 @@ venv/*
 *.db
 *.log
 *.json
+celerybeat-schedule.db
+paused.conf

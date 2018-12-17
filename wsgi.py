@@ -1,7 +1,4 @@
-import os
-import json
 import click
-from flask_migrate import Migrate, upgrade
 from app import create_app, db
 from app.models.auth import User, Role, UserRole, Permission, RolePermission
 from app.models.assets import Host, Domain, Service, HostDomain
@@ -13,7 +10,6 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=".flaskenv")
 
 app = create_app()
-migrate = Migrate(app, db)
 
 
 @app.shell_context_processor
@@ -45,17 +41,13 @@ def fake():
 
 @app.cli.command()
 def update():
-    permission_info_list = [
-        {"name": "Web应用报文详情", "endpoint": "web.package_info"},
-    ]
-    Permission.insert_items(permission_info_list)
+    pass
 
 
 @app.cli.command()
 def deploy():
-    upgrade()
-    # db.drop_all()
-    # db.create_all()
+    db.drop_all()
+    db.create_all()
     # add user
     user_info_list = [
         {"name": "aaa", "department": "信息安全", "password": "123456"},

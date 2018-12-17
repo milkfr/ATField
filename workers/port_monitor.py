@@ -7,19 +7,19 @@ from celery.signals import before_task_publish, task_postrun
 from app.models.assets import Host
 from app.models.tasks import Task
 from workers.result import save
+import uuid
 
 
 @before_task_publish.connect(sender="workers.port_monitor.worker")
 def before(sender=None, headers=None, body=None, properties=None, **kw):
     targets = ' '.join([host.ip for host in Host.query.all()])
-    task = Task.insert_task_and_return("port monitor", "timed", "", "周期nmap", targets)
+    task = Task.insert_task_and_return("port monitor", "timed", "周期nmap", targets)
     body[1]["targets"] = targets
     headers["id"] = task.id
 
 
 @task_postrun.connect()
 def after(sender=None, task_id=None, retval=None, **kw):
-    print(retval)
     if sender.name == "workers.port_monitor.worker":
         save.apply_async(args=(retval, task_id))
 
@@ -41,9 +41,8 @@ def worker(self, targets, options):
     self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
 
     for ip in targets.split():
-        temp_file = "nmap.log"
+        temp_file = "{}.log".format(str(uuid.uuid1()))
         scan_cmd = "nmap {} -oX {} {}".format(options, temp_file, ip)
-        print(scan_cmd)
         call(scan_cmd, shell=True)
 
         item = {}
@@ -54,11 +53,16 @@ def worker(self, targets, options):
             item["end_time"] = parser_result.endtime
             item["elasped"] = parser_result.elapsed
             item["commandline"] = parser_result.commandline
-            item["ip"] = ip
             item["error"] = ""
-            item["services"] = []
+            item["hosts"] = []
 
             for host in parser_result.hosts:
+                host_item = {
+                    "address": host.address,
+                    "status": host.status,
+                    "vendor": host.vendor,
+                    "services": [],
+                }
                 for service in host.services:
                     service_item = {
                         "port": service.port,
@@ -68,7 +72,8 @@ def worker(self, targets, options):
                         "service": service.service,
                         "banner": service.banner,
                     }
-                    item["services"].append(service_item)
+                    host_item["services"].append(service_item)
+                item["hosts"].append(host_item)
             if os.path.exists(temp_file):
                 os.remove(temp_file)
         except Exception as e:

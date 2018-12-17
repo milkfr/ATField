@@ -1,7 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, SelectMultipleField, DateTimeField
-from wtforms.validators import DataRequired, Length
-from ..models.tasks import Task
+from wtforms import StringField, DateTimeField
 
 
 class TaskInfoForm(FlaskForm):
@@ -11,7 +9,6 @@ class TaskInfoForm(FlaskForm):
     end_time = DateTimeField("结束时间", render_kw={"disabled": "disabled"})
     status = StringField("状态", render_kw={"disabled": "disabled"})
     description = StringField("描述", render_kw={"disabled": "disabled"})
-    options = StringField("选项", render_kw={"disabled": "disabled"})
     targets = StringField("目标", render_kw={"disabled": "disabled"})
     result = StringField("结果", render_kw={"disabled": "disabled"})
 
