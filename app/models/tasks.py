@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from sqlalchemy.dialects.mysql import LONGTEXT
 from .. import db
 
 
@@ -12,8 +13,8 @@ class Task(db.Model):
     func_type = db.Column(db.String(50))
     time_type = db.Column(db.String(50))
     description = db.Column(db.String(500))
-    targets = db.Column(db.UnicodeText)
-    result = db.Column(db.UnicodeText)
+    targets = db.Column(LONGTEXT)
+    result = db.Column(LONGTEXT)
 
     def __repr__(self):
         return "<Task {} {}>".format(self.func_type, self.time_type)

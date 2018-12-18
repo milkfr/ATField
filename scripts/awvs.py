@@ -25,7 +25,7 @@ channel.queue_bind(
 
 def callback(ch, method, properties, body):
     print(" [x] {} {}".format(method.routing_key, body))
-    print(json.loads(body))
+    print(json.loads(body.decode("utf-8")))
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 

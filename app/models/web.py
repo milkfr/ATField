@@ -1,6 +1,7 @@
 import uuid
 from .. import db
 from datetime import datetime
+from sqlalchemy.dialects.mysql import LONGTEXT
 
 
 class Application(db.Model):
@@ -68,12 +69,12 @@ class Package(db.Model):
     __tablename__ = "packages"
     id = db.Column(db.String(36), primary_key=True)
     entrance = db.Column(db.String(50))  # protocol+domain(or host+port)
-    path = db.Column(db.UnicodeText)
+    path = db.Column(LONGTEXT)
     method = db.Column(db.String(10))
     status = db.Column(db.Integer)
-    request = db.Column(db.UnicodeText)
-    response = db.Column(db.UnicodeText)
-    remarks = db.Column(db.UnicodeText)
+    request = db.Column(LONGTEXT)
+    response = db.Column(LONGTEXT)
+    remarks = db.Column(db.Text)
     update_time = db.Column(db.DateTime)
     application_id = db.Column(db.String(36), db.ForeignKey("applications.id"))
 
@@ -118,7 +119,7 @@ class Plugin(db.Model):
     id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(50))
     description = db.Column(db.String(500))
-    content = db.Column(db.UnicodeText)
+    content = db.Column(LONGTEXT)
     application_plugin = db.relationship("ApplicationPlugin", backref="plugin")
 
     def __repr__(self):
