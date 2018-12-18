@@ -52,5 +52,5 @@ def worker(self, targets, options):
         routing_key="awvs",
         body=json.dumps({"option": options, "targets": targets})
     )
-    print(" [x] Send {} {}", options, targets)
+    print(" [x] Send {} {}".format(options, targets))
     connection.close()

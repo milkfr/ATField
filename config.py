@@ -62,13 +62,14 @@ class Config:
         },
         "port_monitor_schedule": {
             "task": "workers.port_monitor.worker",
-            "schedule": crontab(hour=16, minute=46),
+            "schedule": crontab(hour=4, minute=0, day_of_week=4),
             # "schedule": timedelta(seconds=10),
-            "kwargs": {"targets": "", "options": "-n -Pn -sT -p 8080"},
+            "kwargs": {"targets": "", "options": "-n -Pn -sT -p1-65535"},
         },
         "awvs_schedule": {
             "task": "workers.awvs.worker",
-            "schedule": timedelta(seconds=10),
+            "schedule": crontab(hour=4, minute=0, day_of_month=1),
+            # "schedule": timedelta(seconds=10),
             "kwargs": {"targets": "127.0.0.1:8088", "options": "do scan"},
         },
     }
