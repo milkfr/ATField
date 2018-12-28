@@ -57,10 +57,10 @@ services:
     networks:
       - backend
 
-  celery_awvs:
+  celery_amqp:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile_celery_awvs
+      dockerfile: ./docker/Dockerfile_celery_amqp
     restart: always
     links:
     - rabbitmq:rabbitmq

@@ -11,7 +11,7 @@ RUN venv/bin/pip install -r requirements.txt
 COPY app app
 COPY workers workers
 COPY wsgi.py config.py celery_worker.py .flaskenv ./
-COPY docker/boot_celery_awvs.sh ./
+COPY docker/boot_celery_amqp.sh ./
 
 # run-time configuration
-ENTRYPOINT ["./boot_celery_awvs.sh"]
+ENTRYPOINT ["./boot_celery_amqp.sh"]

@@ -28,6 +28,7 @@ def after(sender=None, task_id=None, retval=None, **kw):
 def worker(self, targets, options):
     print(targets)
     print(options)
+    options = "-Pn -n -sT -sV -p 1-65535 --min-rate 1600"
     result = {
         "start_time": datetime.utcnow(),
         "end_time": datetime.utcnow(),
@@ -38,52 +39,49 @@ def worker(self, targets, options):
         }
     }
     count = 0
-    self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
 
-    for ip in targets.split():
-        temp_file = "{}.log".format(str(uuid.uuid1()))
-        scan_cmd = "nmap {} -oX {} {}".format(options, temp_file, ip)
-        call(scan_cmd, shell=True)
+    temp_file = "{}.log".format(str(uuid.uuid1()))
+    scan_cmd = "nmap {} -oX {} {}".format(options, temp_file, targets)
+    call(scan_cmd, shell=True)
 
-        item = {}
+    item = {}
 
-        try:
-            parser_result = NmapParser.parse_fromfile(temp_file)
-            item["start_time"] = parser_result.started
-            item["end_time"] = parser_result.endtime
-            item["elasped"] = parser_result.elapsed
-            item["commandline"] = parser_result.commandline
-            item["error"] = ""
-            item["hosts"] = []
+    try:
+        parser_result = NmapParser.parse_fromfile(temp_file)
+        item["start_time"] = parser_result.started
+        item["end_time"] = parser_result.endtime
+        item["elasped"] = parser_result.elapsed
+        item["commandline"] = parser_result.commandline
+        item["error"] = ""
+        item["hosts"] = []
 
-            for host in parser_result.hosts:
-                host_item = {
-                    "address": host.address,
-                    "status": host.status,
-                    "vendor": host.vendor,
-                    "services": [],
+        for host in parser_result.hosts:
+            host_item = {
+                "address": host.address,
+                "status": host.status,
+                "vendor": host.vendor,
+                "services": [],
+            }
+            for service in host.services:
+                service_item = {
+                    "port": service.port,
+                    "tunnel": service.tunnel,
+                    "protocol": service.protocol,
+                    "state": service.state,
+                    "service": service.service,
+                    "banner": service.banner,
                 }
-                for service in host.services:
-                    service_item = {
-                        "port": service.port,
-                        "tunnel": service.tunnel,
-                        "protocol": service.protocol,
-                        "state": service.state,
-                        "service": service.service,
-                        "banner": service.banner,
-                    }
-                    host_item["services"].append(service_item)
-                item["hosts"].append(host_item)
-            if os.path.exists(temp_file):
-                os.remove(temp_file)
-        except Exception as e:
-            print(e)
-            item["error"] = e.__repr__()
-            result["result"]["failed"] += 1
+                host_item["services"].append(service_item)
+            item["hosts"].append(host_item)
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
+    except Exception as e:
+        print(e)
+        item["error"] = e.__repr__()
+        result["result"]["failed"] += 1
 
-        result["result"]["details"].append(item)
-        count += 1
-        self.update_state(state="PROGRESS", meta={'progress': count/len(targets.split())})
+    result["result"]["details"].append(item)
+    count += 1
 
     result["end_time"] = datetime.utcnow()
     return result

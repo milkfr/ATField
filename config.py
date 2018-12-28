@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from kombu import Exchange, Queue
-from datetime import timedelta
 from celery.schedules import crontab
 
 load_dotenv(dotenv_path=".flaskenv")
@@ -20,6 +19,7 @@ class Config:
     CELERY_BROKER_URL = os.environ.get("FLASK_CELERY_BROKER_URL")
 
     CELERY_INCLUDES = ("workers",)
+    CELERY_IMPORTS = ("workers",)
 
     CELERY_QUEUES = (
         Queue("task_result_save", Exchange("task_result_save"),
@@ -28,8 +28,8 @@ class Config:
               routing_key="task_domain_resolution"),
         Queue("task_port_monitor", Exchange("task_port_monitor"),
               routing_key="task_port_monitor"),
-        Queue("task_awvs", Exchange("task_awvs"),
-              routing_key="task_awvs"),
+        Queue("task_amqp", Exchange("task_amqp"),
+              routing_key="task_amqp"),
     )
     # # 路由
     CELERY_ROUTES = {
@@ -45,9 +45,9 @@ class Config:
             "queue": "task_port_monitor",
             "routing_key": "task_port_monitor"
         },
-        "workers.awvs.worker": {
-            "queue": "task_awvs",
-            "routing_key": "task_awvs"
+        "workers.amqp.worker": {
+            "queue": "task_amqp",
+            "routing_key": "task_amqp"
         }
     }
 
@@ -56,21 +56,33 @@ class Config:
     CELERYBEAT_SCHEDULE = {
         "domain_resolution_schedule": {
             "task": "workers.domain_resolution.worker",
-            "schedule": crontab(hour=4, minute=0),
-            # "schedule": timedelta(seconds=10),
+            "schedule": crontab(hour=0, minute=0),
             "kwargs": {"targets": ""},
         },
         "port_monitor_schedule": {
             "task": "workers.port_monitor.worker",
-            "schedule": crontab(hour=4, minute=0, day_of_week=4),
-            # "schedule": timedelta(seconds=10),
+            "schedule": crontab(hour=1, minute=0),
             "kwargs": {"targets": "", "options": "-n -Pn -sT -p1-65535"},
         },
-        "awvs_schedule": {
-            "task": "workers.awvs.worker",
-            "schedule": crontab(hour=4, minute=0, day_of_month=1),
-            # "schedule": timedelta(seconds=10),
-            "kwargs": {"targets": "127.0.0.1:8088", "options": "do scan"},
+        "awvs_do_scan_schedule": {
+            "task": "workers.amqp.worker",
+            "schedule": crontab(hour=4, minute=0),
+            "kwargs": {"task": "awvs", "targets": "", "options": "do scan"},
+        },
+        "awvs_get_report_schedule": {
+            "task": "workers.amqp.worker",
+            "schedule": crontab(hour=7, minute=0),
+            "kwargs": {"task": "awvs", "targets": "127.0.0.1:8088", "options": "get report"},
+        },
+        "nessus_do_scan_schedule": {
+            "task": "workers.amqp.worker",
+            "schedule": crontab(hour=0, minute=0),
+            "kwargs": {"task": "nessus", "targets": "", "options": "do scan"},
+        },
+        "nessus_get_report_schedule": {
+            "task": "workers.amqp.worker",
+            "schedule": crontab(hour=3, minute=0),
+            "kwargs": {"task": "nessus", "targets": "", "options": "do scan"},
         },
     }
 

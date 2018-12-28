@@ -1,1 +1,1 @@
-from . import domain_resolution, port_monitor, result, awvs
+from . import domain_resolution, port_monitor, amqp, result

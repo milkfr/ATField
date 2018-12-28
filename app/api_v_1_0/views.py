@@ -134,7 +134,7 @@ def domain_list():
             "id": item.id,
             "name": item.name,
             "description": item.description,
-            "host_list": [host.ip for host in item.host_list]
+            "host_list": [host.ip if host else None for host in item.host_list]
         } for item in items],
         "prev": prev,
         "next": next,
