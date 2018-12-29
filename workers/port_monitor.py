@@ -28,7 +28,6 @@ def after(sender=None, task_id=None, retval=None, **kw):
 def worker(self, targets, options):
     print(targets)
     print(options)
-    options = "-Pn -n -sT -sV -p 1-65535 --min-rate 1600"
     result = {
         "start_time": datetime.utcnow(),
         "end_time": datetime.utcnow(),

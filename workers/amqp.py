@@ -3,7 +3,7 @@ from celery.signals import before_task_publish, task_postrun
 from app.models.tasks import Task
 from app.models.assets import Host
 from app.models.assets import Service
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 import pika
 from config import config
 import json
@@ -19,14 +19,13 @@ def before(sender=None, headers=None, body=None, properties=None, **kw):
         targets = ' '.join([host.ip for host in Host.query.all()])
     elif task_name == "awvs":
         targets = Service.query.filter(and_(Service.state != "closed",
-                                            Service.service == "http", Service.service == "https")).all()
+                                            or_(Service.service == "http", Service.service == "https"))).all()
         targets = ' '.join(["{}://{}:{}".format(target.service, target.host.ip, target.port) for target in targets])
     if options == "do scan":
         task = Task.insert_task_and_return(task_name, "timed", "{}周期扫描".format(task_name), targets)
     elif options == "get report":
-        task = Task.query.filter(Task.func_type == "port monitor").order_by(Task.start_time.desc()).first()
+        task = Task.query.filter(Task.func_type == task_name).order_by(Task.start_time.desc()).first()
         task.update_result(result="ok")
-    print(body[1])
     body[1]["targets"] = targets
     headers["id"] = task.id
 
@@ -44,7 +43,7 @@ def worker(self, task, targets, options):
 
 
 def publishing(name, options, targets):
-    print(" [x] start Send {} {} {}", name, options, targets)
+    print(" [x] start Send {} {} {}".format(name, options, targets))
     connection = pika.BlockingConnection(pika.URLParameters(config.CELERY_BROKER_URL))
 
     channel = connection.channel()
