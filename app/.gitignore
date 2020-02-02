@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Editor directories and files
+.idea
+
+*.log
+
+scanner/plugin/*
+.env
+celerybeat-schedule
+

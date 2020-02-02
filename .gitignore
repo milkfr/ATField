@@ -1,15 +1,1 @@
-*.pyc
-.idea*
-.python-version
-*.sqlite
-*.iml
 */.DS_Store
-ip.txt
-domain.txt
-certs/*
-venv/*
-*.db
-*.log
-*.json
-celerybeat-schedule.db
-paused.conf

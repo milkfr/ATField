@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.80 scan initiated Sun Feb  2 22:31:46 2020 as: nmap -sT -sV -sC -p 80 -oX 8d7b48b4-45c8-11ea-b1d1-acde48001122.log 134.175.212.148 123.207.104.39 -->
+<nmaprun scanner="nmap" args="nmap -sT -sV -sC -p 80 -oX 8d7b48b4-45c8-11ea-b1d1-acde48001122.log 134.175.212.148 123.207.104.39" start="1580653906" startstr="Sun Feb  2 22:31:46 2020" version="7.80" xmloutputversion="1.04">
+<scaninfo type="connect" protocol="tcp" numservices="1" services="80"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1580653906" endtime="1580653908"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="134.175.212.148" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="80"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="http" method="table" conf="3"/></port>
+</ports>
+<times srtt="38606" rttvar="38606" to="193030"/>
+</host>
+<runstats><finished time="1580653908" timestr="Sun Feb  2 22:31:48 2020" elapsed="2.14" summary="Nmap done at Sun Feb  2 22:31:48 2020; 2 IP addresses (1 host up) scanned in 2.14 seconds" exit="success"/><hosts up="1" down="1" total="2"/>
+</runstats>
+</nmaprun>
