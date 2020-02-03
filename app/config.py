@@ -10,11 +10,15 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', '123456')
     SQLALCHEMY_DATABASE_URI = os.environ.get('FLASK_SQLALCHEMY_DATABASE_URI',
-                                             'mysql+cymysql://root:mysql@127.0.0.1:3306/atfield')
+                                             'mysql+cymysql://root:mysql666@127.0.0.1:3306/atfield')
     CELERY_BROKEN_URL = os.environ.get('FLASK_CELERY_BROKER_URL',
                                        'amqp://guest:guest@127.0.0.1:5672/atfield')
     CELERY_RESULT_BACKEND = os.environ.get('FLASK_CELERY_BROKER_URL',
                                            'redis://:@127.0.0.1:6379/0')
+    ES_HOST = os.environ.get('FLASK_ES_HOST', '127.0.0.1')
+    ES_PORT = os.environ.get('FLASK_ES_PORT', 9500)
+    ES_USERNAME = os.environ.get('FLASK_ES_USERNAME', 'username')
+    ES_PASSWORD = os.environ.get('FLASK_ES_PASSWORD', 'password')
     SQLALCHEMY_RECORD_QUERIES = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

@@ -6,6 +6,8 @@ from scanner.node.node import handle
 
 class BaseHandleTask(celery.Task, metaclass=abc.ABCMeta):
 
+    name = 'master_base'
+
     @abc.abstractmethod
     def get_target_list(self, target_option):
         pass
@@ -20,7 +22,7 @@ class BaseHandleTask(celery.Task, metaclass=abc.ABCMeta):
         tasks = []
         for plugin in plugin_list:
             for target in target_list:
-                tasks.append(handle.s(target, plugin))
+                tasks.append(handle.s(target, plugin, self.name))
         chord(tasks)(self.get_success_callback().s().on_error(self.get_error_callback().s()))
 
     @abc.abstractmethod
