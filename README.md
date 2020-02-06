@@ -19,7 +19,30 @@
 我的扫描器不能短平快，也没有把PoC开源，不能开箱即用，需要明白结构和代码，但是理解了，我觉得做甲方自研用起来应该还可以
 
 ### 0x01 构架
-![]()
+![构架图](https://github.com/milkfr/ATField/blob/master/structure.png)
+
+```
+.
+├── app  # API后台和扫描器
+│   ├── app  # flask web api
+│   ├── celery_worker.py  # celery启动文件
+│   ├── config.py  # 配置文件
+│   ├── gunicorn.py  # gunicorn文件
+│   ├── logs  # 日志文件
+│   ├── manager.py  # app启动文件
+│   ├── requirements.txt  # Python依赖版本
+│   └── scanner  # 扫描器
+│       ├── __init__.py  # 注册celery任务的位置
+│       ├── master  # celery_master节点的任务
+│       ├── node  # celery_node节点的任务
+│       └── plugin # 编写PoC的位置
+│           └── __init__.py  # 注册PoC的位置
+├── conf
+│   ├── docker
+│   ├── nginx
+│   └── supervisor
+└── web  # 前端
+```
 
 ### 0x02 如何写PoC
 PoC和Celery结合，分成`prehandle`、`callback`和`PoC`三部分
