@@ -18,11 +18,6 @@ services:
   
   rabbitmq:
     image: rabbitmq:3.8.2
-    environment:
-      # RABBITMQ_ERLANG_COOKIE: "aaaaaaaaaaaaa"
-      RABBITMQ_DEFAULT_USER: "guest"
-      RABBITMQ_DEFAULT_PASS: "guest"
-      RABBITMQ_DEFAULT_VHOST: "atfield"
     ports:
       - 127.0.0.1:15672:15672
       - 127.0.0.1:5672:5672
