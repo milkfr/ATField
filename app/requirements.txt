@@ -20,7 +20,7 @@ greenlet==0.4.15
 gunicorn==20.0.4
 idna==2.8
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 kombu==4.6.7
 MarkupSafe==1.1.1
 pycryptodome==3.9.4
