@@ -11,7 +11,7 @@ dnspython==1.16.0
 elasticsearch6==6.4.2
 Flask==1.1.1
 Flask-APScheduler==1.11.0
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 Flask-HTTPAuth==3.3.0
 Flask-SQLAlchemy==2.4.1
 flower==0.9.3
