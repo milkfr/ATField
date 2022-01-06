@@ -2,7 +2,7 @@ amqp==2.5.2
 APScheduler==3.6.3
 Babel==2.7.0
 billiard==3.6.1.0
-celery==4.4.0
+celery==5.2.2
 certifi==2019.11.28
 chardet==3.0.4
 Click==7.0
